@@ -19,7 +19,7 @@ export default function NavBar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link href="/" className="text-xl font-bold text-gray-900">
-            PioRealEstate
+            PioProperties
           </Link>
 
           {/* Desktop Menu */}
@@ -44,8 +44,6 @@ export default function NavBar() {
           </button>
         </div>
       </div>
-
-      
     </nav>
   );
 }

@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -9,33 +15,9 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique @db.VarChar(255)
-  hashedPassword  String    @db.VarChar(255)
-  create_at DateTime? @default(now()) @db.Timestamp(6)
-
-  emailVerified Boolean? @default(false)
-  isActive   Boolean  @default(true)
-
-  profile   UserProfile?
-  properties Property[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-
-model UserProfile {
-  id        Int       @id @default(autoincrement())
-  name      String    @db.VarChar(100)
-  age       Int?
-
-  // User of the profile
-  userId    Int       @unique
-  user      User      @relation(fields: [userId], references: [id])
-}
-
-model Property {
-  id        Int       @id @default(autoincrement())
-
-  // Owner of the property
-  userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-}
-
