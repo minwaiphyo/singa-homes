@@ -1,0 +1,1 @@
+Current DB connection (Session pooler) does not work from NUS network (potential port issue)

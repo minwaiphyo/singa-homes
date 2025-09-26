@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { User, LogOut, Settings, Heart, Home } from "lucide-react";
+import { User, LogOut, Settings, Heart, Home, Plus } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -19,6 +19,14 @@ export default function NavBar() {
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: "/" });
+  };
+
+  // Handle Create Listing click - redirect to login if not authenticated
+  const handleCreateListingClick = () => {
+    if (!session) {
+      window.location.href = "/auth/sign-in";
+    }
+    // If user is authenticated, the Link component will handle the routing
   };
 
   // Close mobile menu when clicking outside
@@ -51,6 +59,27 @@ export default function NavBar() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Create Listing - Always visible */}
+            <Link
+              href={session ? "/create-listing" : "/auth/sign-in"}
+              onClick={session ? undefined : handleCreateListingClick}
+              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create Listing</span>
+            </Link>
+
+            {/* Favorites - Only visible if authenticated */}
+            {session && (
+              <Link
+                href="/favorites"
+                className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
+              >
+                <Heart className="w-4 h-4" />
+                <span>Favorites</span>
+              </Link>
+            )}
 
             {/* Authentication Section */}
             {status === "loading" ? (
@@ -162,7 +191,7 @@ export default function NavBar() {
                   Sign In
                 </Link>
                 <Link
-                  href="/auth/sign-up"
+                  href="/auth/signup"
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   Sign Up
@@ -202,6 +231,28 @@ export default function NavBar() {
                     {link.label}
                   </Link>
                 ))}
+
+                {/* Mobile Create Listing - Always visible */}
+                <Link
+                  href={session ? "/create-listing" : "/auth/sign-in"}
+                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                  onClick={closeMobileMenu}
+                >
+                  <Plus className="w-5 h-5 mr-3" />
+                  Create Listing
+                </Link>
+
+                {/* Mobile Favorites - Only visible if authenticated */}
+                {session && (
+                  <Link
+                    href="/favorites"
+                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
+                    onClick={closeMobileMenu}
+                  >
+                    <Heart className="w-5 h-5 mr-3" />
+                    Favorites
+                  </Link>
+                )}
 
                 {/* Mobile Authentication Section */}
                 <div className="border-t border-gray-200 pt-3 mt-3">
@@ -294,7 +345,7 @@ export default function NavBar() {
                         Sign In
                       </Link>
                       <Link
-                        href="/auth/signup"
+                        href="/auth/sign-up"
                         className="block px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors text-center"
                         onClick={closeMobileMenu}
                       >
