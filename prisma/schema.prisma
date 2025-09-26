@@ -15,9 +15,114 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  id              String   @id @default(cuid())
+  email           String   @unique
+  password        String // Hashed password
+  firstName       String
+  lastName        String
+  age             Int?
+  phone           String?
+  bio             String?
+  avatar          String? // URL to profile picture
+  isEmailVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  properties Property[] // Properties listed by this user
+  favorites  Favorite[] // Properties favorited by this user
+
+  @@map("users")
+}
+
+model Property {
+  id           String       @id @default(cuid())
+  title        String
+  description  String?
+  price        Float
+  area         Float // Area in square feet
+  bedrooms     Int?
+  bathrooms    Int?
+  propertyType PropertyType
+  listingType  ListingType
+
+  // Location details
+  address   String
+  city      String
+  state     String
+  zipCode   String
+  country   String @default("United States")
+  latitude  Float?
+  longitude Float?
+
+  // Property features
+  yearBuilt     Int?
+  parkingSpaces Int?
+  hasGarden     Boolean @default(false)
+  hasPool       Boolean @default(false)
+  hasBalcony    Boolean @default(false)
+
+  // Listing status
+  isActive   Boolean @default(true)
+  isFeatured Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  sellerId  String
+  seller    User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  images    PropertyImage[]
+  favorites Favorite[]
+
+  @@map("properties")
+}
+
+model PropertyImage {
+  id        String   @id @default(cuid())
+  url       String // URL to the image
+  altText   String? // Alternative text for accessibility
+  isPrimary Boolean  @default(false) // Main listing image
+  order     Int      @default(0) // Display order
+  createdAt DateTime @default(now())
+
+  // Relations
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_images")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  // Ensure a user can only favorite a property once
+  @@unique([userId, propertyId])
+  @@map("favorites")
+}
+
+// Enums
+enum PropertyType {
+  HOUSE
+  APARTMENT
+  CONDO
+  TOWNHOUSE
+  VILLA
+  STUDIO
+  DUPLEX
+  PENTHOUSE
+  LAND
+  COMMERCIAL
+}
+
+enum ListingType {
+  SALE
+  RENT
 }
