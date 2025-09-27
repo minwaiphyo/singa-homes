@@ -1,10 +1,9 @@
 // app/api/profile/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma'; // Use the singleton instead of creating new instance
+import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
-
-// GET - Fetch user profile by ID or email
+// GET - Fetch user profile by userId or email
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -29,6 +28,7 @@ export async function GET(request: NextRequest) {
         phone: true,
         bio: true,
         avatar: true,
+        isEmailVerified: true,
         createdAt: true,
         updatedAt: true,
         _count: {
@@ -57,90 +57,104 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST - Create new user profile
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
+// // POST - Create new user profile (This should probably be removed since registration handles user creation)
+// export async function POST(request: NextRequest) {
+//   try {
+//     const body = await request.json();
     
-    // Validate required fields
-    const { email, firstName, lastName } = body;
+//     // Validate required fields - PASSWORD is required in your schema
+//     const { email, password, firstName, lastName } = body;
     
-    if (!email || !firstName || !lastName) {
-      return NextResponse.json(
-        { error: 'Email, firstName, and lastName are required' },
-        { status: 400 }
-      );
-    }
+//     if (!email || !password || !firstName || !lastName) {
+//       return NextResponse.json(
+//         { error: 'Email, password, firstName, and lastName are required' },
+//         { status: 400 }
+//       );
+//     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
+//     // Validate email format
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     if (!emailRegex.test(email)) {
+//       return NextResponse.json(
+//         { error: 'Invalid email format' },
+//         { status: 400 }
+//       );
+//     }
 
-    // Validate age if provided
-    if (body.age !== undefined && (body.age < 0 || body.age > 150)) {
-      return NextResponse.json(
-        { error: 'Age must be between 0 and 150' },
-        { status: 400 }
-      );
-    }
+//     // Validate password strength
+//     if (password.length < 8) {
+//       return NextResponse.json(
+//         { error: 'Password must be at least 8 characters long' },
+//         { status: 400 }
+//       );
+//     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+//     // Validate age if provided
+//     if (body.age !== undefined && (body.age < 0 || body.age > 150)) {
+//       return NextResponse.json(
+//         { error: 'Age must be between 0 and 150' },
+//         { status: 400 }
+//       );
+//     }
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      );
-    }
+//     // Check if user already exists
+//     const existingUser = await prisma.user.findUnique({
+//       where: { email: email.toLowerCase() },
+//     });
 
-    // Create new user
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        firstName,
-        lastName,
-        age: body.age || null,
-        phone: body.phone || null,
-        bio: body.bio || null,
-        avatar: body.avatar || null,
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        age: true,
-        phone: true,
-        bio: true,
-        avatar: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+//     if (existingUser) {
+//       return NextResponse.json(
+//         { error: 'User with this email already exists' },
+//         { status: 409 }
+//       );
+//     }
 
-    return NextResponse.json(
-      { 
-        message: 'Profile created successfully',
-        user: newUser 
-      },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Error creating profile:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
+//     // Hash password
+//     const hashedPassword = await bcrypt.hash(password, 12);
+
+//     // Create new user
+//     const newUser = await prisma.user.create({
+//       data: {
+//         email: email.toLowerCase(),
+//         password: hashedPassword, // This was missing in original
+//         firstName,
+//         lastName,
+//         age: body.age || null,
+//         phone: body.phone || null,
+//         bio: body.bio || null,
+//         avatar: body.avatar || null,
+//         isEmailVerified: body.isEmailVerified || false, // Added this field
+//       },
+//       select: {
+//         id: true,
+//         email: true,
+//         firstName: true,
+//         lastName: true,
+//         age: true,
+//         phone: true,
+//         bio: true,
+//         avatar: true,
+//         isEmailVerified: true,
+//         createdAt: true,
+//         updatedAt: true,
+//       },
+//     });
+
+//     return NextResponse.json(
+//       { 
+//         message: 'Profile created successfully',
+//         user: newUser 
+//       },
+//       { status: 201 }
+//     );
+//   } catch (error) {
+//     console.error('Error creating profile:', error);
+//     return NextResponse.json(
+//       { error: 'Internal server error' },
+//       { status: 500 }
+//     );
+//   }
+// }
 
 // PUT - Update existing user profile
 export async function PUT(request: NextRequest) {
@@ -186,6 +200,12 @@ export async function PUT(request: NextRequest) {
     if (body.phone !== undefined) updateData.phone = body.phone;
     if (body.bio !== undefined) updateData.bio = body.bio;
     if (body.avatar !== undefined) updateData.avatar = body.avatar;
+    if (body.isEmailVerified !== undefined) updateData.isEmailVerified = body.isEmailVerified;
+
+    // Handle password update separately with hashing
+    if (body.password && body.password.length >= 8) {
+      updateData.password = await bcrypt.hash(body.password, 12);
+    }
 
     // Update user
     const updatedUser = await prisma.user.update({
@@ -200,6 +220,7 @@ export async function PUT(request: NextRequest) {
         phone: true,
         bio: true,
         avatar: true,
+        isEmailVerified: true,
         createdAt: true,
         updatedAt: true,
       },

@@ -19,8 +19,8 @@ export default function SignInPage() {
   const searchParams = useSearchParams();
   const { data: session, status } = useSession();
 
-  // Get callback URL from query params or default to dashboard
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  // Get callback URL from query params or default to home page
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const errorParam = searchParams.get("error");
 
   // Redirect if already authenticated

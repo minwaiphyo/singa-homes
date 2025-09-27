@@ -51,23 +51,19 @@ model Property {
   city      String
   state     String
   zipCode   String
-  country   String @default("United States")
+  country   String @default("Singapore")
   latitude  Float?
   longitude Float?
 
-  // Property features
-  yearBuilt     Int?
-  parkingSpaces Int?
-  hasGarden     Boolean @default(false)
-  hasPool       Boolean @default(false)
-  hasBalcony    Boolean @default(false)
+  // HDB-specific field (only applies when propertyType is HDB)
+  leaseYearsLeft Int? // Years remaining on HDB lease
 
   // Listing status
   isActive   Boolean @default(true)
   isFeatured Boolean @default(false)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
 
   // Relations
   sellerId  String
@@ -110,16 +106,9 @@ model Favorite {
 
 // Enums
 enum PropertyType {
-  HOUSE
-  APARTMENT
+  HDB
   CONDO
-  TOWNHOUSE
-  VILLA
-  STUDIO
-  DUPLEX
-  PENTHOUSE
-  LAND
-  COMMERCIAL
+  LANDED
 }
 
 enum ListingType {

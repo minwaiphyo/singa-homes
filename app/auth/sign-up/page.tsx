@@ -96,7 +96,7 @@ export default function SignUpPage() {
         ...(formData.phone && { phone: formData.phone }),
       };
 
-      const response = await fetch("/api/auth/register", {
+      const response = await fetch("/api/auth/sign-up", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,10 +118,10 @@ export default function SignUpPage() {
           });
 
           if (result?.ok) {
-            router.push("/dashboard");
+            router.push("/");
           } else {
             setSuccess("Account created! Please sign in.");
-            setTimeout(() => router.push("/auth/signin"), 2000);
+            setTimeout(() => router.push("/auth/sign-in"), 2000);
           }
         }, 1000);
       } else {
