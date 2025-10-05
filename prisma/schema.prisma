@@ -47,13 +47,13 @@ model Property {
   listingType  ListingType
 
   // Location details
-  address   String
-  city      String
-  state     String
-  zipCode   String
-  country   String @default("Singapore")
-  latitude  Float?
-  longitude Float?
+  address String
+  city    String
+  state   String
+  zipCode String
+  country String @default("Singapore")
+  // latitude  Float?
+  // longitude Float?
 
   // HDB-specific field (only applies when propertyType is HDB)
   leaseYearsLeft Int? // Years remaining on HDB lease

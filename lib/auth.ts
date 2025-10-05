@@ -3,6 +3,12 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import type {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
+import { getServerSession } from "next-auth"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -103,4 +109,8 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/signin",
   },
   debug: process.env.NODE_ENV === "development",
-};
+  secret: process.env.NEXTAUTH_SECRET,
+}
+
+
+
