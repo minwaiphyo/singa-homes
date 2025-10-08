@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -15,74 +9,59 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  password        String // Hashed password
+  id              String     @id @default(cuid())
+  email           String     @unique
   firstName       String
   lastName        String
   age             Int?
   phone           String?
   bio             String?
-  avatar          String? // URL to profile picture
-  isEmailVerified Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
-  properties Property[] // Properties listed by this user
-  favorites  Favorite[] // Properties favorited by this user
+  avatar          String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  isEmailVerified Boolean    @default(false)
+  password        String
+  favorites       Favorite[]
+  properties      Property[]
 
   @@map("users")
 }
 
 model Property {
-  id           String       @id @default(cuid())
-  title        String
-  description  String?
-  price        Float
-  area         Float // Area in square feet
-  bedrooms     Int?
-  bathrooms    Int?
-  propertyType PropertyType
-  listingType  ListingType
-
-  // Location details
-  address String
-  city    String
-  state   String
-  zipCode String
-  country String @default("Singapore")
-  // latitude  Float?
-  // longitude Float?
-
-  // HDB-specific field (only applies when propertyType is HDB)
-  leaseYearsLeft Int? // Years remaining on HDB lease
-
-  // Listing status
-  isActive   Boolean @default(true)
-  isFeatured Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
-
-  // Relations
-  sellerId  String
-  seller    User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  images    PropertyImage[]
-  favorites Favorite[]
+  id             String          @id @default(cuid())
+  title          String
+  description    String?
+  price          Float
+  area           Float
+  bedrooms       Int?
+  bathrooms      Int?
+  propertyType   PropertyType
+  listingType    ListingType
+  address        String
+  city           String
+  state          String
+  zipCode        String
+  country        String          @default("Singapore")
+  isActive       Boolean         @default(true)
+  isFeatured     Boolean         @default(false)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now())
+  sellerId       String
+  leaseYearsLeft Int?
+  favorites      Favorite[]
+  seller         User            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  images         PropertyImage[]
 
   @@map("properties")
 }
 
 model PropertyImage {
-  id        String   @id @default(cuid())
-  url       String // URL to the image
-  altText   String? // Alternative text for accessibility
-  isPrimary Boolean  @default(false) // Main listing image
-  order     Int      @default(0) // Display order
-  createdAt DateTime @default(now())
-
-  // Relations
+  id         String   @id @default(cuid())
+  url        String
+  altText    String?
+  isPrimary  Boolean  @default(false)
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
@@ -90,21 +69,17 @@ model PropertyImage {
 }
 
 model Favorite {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-
-  // Relations
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   propertyId String
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Ensure a user can only favorite a property once
   @@unique([userId, propertyId])
   @@map("favorites")
 }
 
-// Enums
 enum PropertyType {
   HDB
   CONDO
