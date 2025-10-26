@@ -5,7 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
-
+  console.log("Received request to create property listing.");
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -59,6 +59,14 @@ export async function POST(request: NextRequest) {
           isFeatured: body.isFeatured ?? false,
         },
       });
+      return NextResponse.json(
+        {
+          success: true,
+          property: newProperty
+        },
+        { status: 201 }
+      );
+      
     } catch (error) {
       console.error('Error creating property:', error);
       return NextResponse.json(
@@ -66,5 +74,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+
+    
 
 }
