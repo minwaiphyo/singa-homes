@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         },
         { status: 201 }
       );
-      
+
     } catch (error) {
       console.error('Error creating property:', error);
       return NextResponse.json(
@@ -79,3 +79,63 @@ export async function POST(request: NextRequest) {
     
 
 }
+
+// Get brief details of ALL properties
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    
+    // Optional filters
+    const propertyType = searchParams.get('propertyType');
+    const listingType = searchParams.get('listingType');
+    const city = searchParams.get('city');
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+
+    const properties = await prisma.property.findMany({
+      where: {
+        isActive: true,
+        ...(propertyType && { propertyType: propertyType as any }),
+        ...(listingType && { listingType: listingType as any }),
+        ...(city && { city: { contains: city, mode: 'insensitive' } }),
+        ...(minPrice && { price: { gte: parseFloat(minPrice) } }),
+        ...(maxPrice && { price: { lte: parseFloat(maxPrice) } }),
+      },
+      select: {
+        id: true,
+        title: true,
+        price: true,
+        propertyType: true,
+        listingType: true,
+        city: true,
+        state: true,
+        bedrooms: true,
+        bathrooms: true,
+        area: true,
+        isFeatured: true,
+        createdAt: true,
+        images: {
+          where: { isPrimary: true },
+          take: 1,
+          select: {
+            url: true,
+            altText: true,
+          },
+        },
+      },
+      orderBy: [
+        { isFeatured: 'desc' },
+        { createdAt: 'desc' },
+      ],
+    });
+
+    return NextResponse.json(properties);
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch properties' },
+      { status: 500 }
+    );
+  }
+}
+

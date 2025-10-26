@@ -7,7 +7,7 @@ import { User, LogOut, Settings, Heart, Home, Plus } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/listings", label: "Listings" },
+  { href: "/properties", label: "Properties" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];
