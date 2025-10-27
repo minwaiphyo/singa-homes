@@ -55,12 +55,7 @@ export default function ProfilePage() {
 
   const fetchProfile = async (id: string) => {
     try {
-
-      
       const response = await fetch(`/api/users/${id}`);
-      
-
-      
       if (response.ok) {
         const data = await response.json();
         setProfile(data.user);
@@ -75,8 +70,6 @@ export default function ProfilePage() {
     }
   };
 
-  
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -85,6 +78,8 @@ export default function ProfilePage() {
       day: "numeric",
     });
   };
+
+
 
   if (status === "loading" || isLoading) {
     return (
@@ -107,6 +102,12 @@ export default function ProfilePage() {
     );
   }
 
+
+
+  //https://feowsnofuagwjwusfbyq.supabase.co/storage/v1/object/public/Avatar/avatars/40e4aae8-22d0-4a0a-96fe-0c5e0566c465.jpg
+  
+
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
@@ -120,7 +121,7 @@ export default function ProfilePage() {
             {/* Avatar */}
 
             <div className="flex items-end justify-between -mt-16 mb-4">
-              {/* <div className="relative">
+              <div className="relative">
                 <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg">
                   {profile.avatar ? (
                     <Image
@@ -135,7 +136,7 @@ export default function ProfilePage() {
                     </div>
                   )}
                 </div>
-              </div> */}
+              </div>
 
               {/* Edit Button */}
               <button

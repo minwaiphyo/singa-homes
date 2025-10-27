@@ -457,7 +457,7 @@ export default function PropertyDetailPage() {
                       Sign in to contact the seller
                     </p>
                     <button
-                      onClick={() => router.push("/auth/signin")}
+                      onClick={() => router.push("/auth/sign-in")}
                       className="w-full bg-blue-600 text-white py-3 px-4 rounded hover:bg-blue-700 font-medium"
                     >
                       Sign In
