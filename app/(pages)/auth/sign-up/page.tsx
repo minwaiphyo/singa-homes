@@ -4,6 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Eye,
   EyeOff,
@@ -13,9 +14,18 @@ import {
   User,
   Phone,
   Calendar,
+  Upload,
+  X,
 } from "lucide-react";
 
+import { supabase } from "@/lib/supabase"
+
+
+
 export default function SignUpPage() {
+
+
+  // Form state
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,6 +35,12 @@ export default function SignUpPage() {
     age: "",
     phone: "",
   });
+
+  // Avatar state
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -40,6 +56,77 @@ export default function SignUpPage() {
     // Clear messages when user starts typing
     if (error) setError("");
     if (success) setSuccess("");
+  };
+
+  // Handle avatar file selection
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      setError("Please select an image file");
+      return;
+    }
+
+    // Validate file size (2MB max)
+    if (file.size > 2 * 1024 * 1024) {
+      setError("Image must be less than 2MB");
+      return;
+    }
+
+    // Set the file
+    setAvatarFile(file);
+
+    // Create preview URL
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+    setError("");
+  };
+
+  // Remove selected avatar
+  const removeAvatar = () => {
+    setAvatarFile(null);
+    if (avatarPreview) {
+      URL.revokeObjectURL(avatarPreview); // Clean up memory
+    }
+    setAvatarPreview("");
+  };
+
+  // Upload avatar to Supabase Storage
+  const uploadAvatar = async (userId: string): Promise<string | null> => {
+    if (!avatarFile) return null;
+
+    setUploadingAvatar(true);
+
+    try {
+      // Create unique filename
+      const fileExt = avatarFile.name.split(".").pop();
+      const fileName = `${userId}/avatar-${Date.now()}.${fileExt}`;
+
+      // Upload to Supabase Storage
+      const { data, error } = await supabase.storage
+        .from("avatars")
+        .upload(fileName, avatarFile, {
+          cacheControl: "3600",
+          upsert: false,
+        });
+
+      if (error) throw error;
+
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("avatars").getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Avatar upload error:", error);
+      return null;
+    } finally {
+      setUploadingAvatar(false);
+    }
   };
 
   const validateForm = () => {
@@ -87,6 +174,7 @@ export default function SignUpPage() {
     setError("");
 
     try {
+      // Step 1: Create user account
       const registrationData = {
         email: formData.email,
         password: formData.password,
@@ -94,6 +182,7 @@ export default function SignUpPage() {
         lastName: formData.lastName,
         ...(formData.age && { age: parseInt(formData.age) }),
         ...(formData.phone && { phone: formData.phone }),
+        avatar: null, // Will be updated after upload
       };
 
       const response = await fetch("/api/auth/sign-up", {
@@ -107,6 +196,20 @@ export default function SignUpPage() {
       const data = await response.json();
 
       if (response.ok) {
+        // Step 2: If avatar was selected, upload it and update user
+        if (avatarFile && data.userId) {
+          const avatarUrl = await uploadAvatar(data.userId);
+
+          if (avatarUrl) {
+            // Update user with avatar URL
+            await fetch(`/api/users/${data.userId}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ avatar: avatarUrl }),
+            });
+          }
+        }
+
         setSuccess("Account created successfully! Signing you in...");
 
         // Auto sign in after successful registration
@@ -121,7 +224,7 @@ export default function SignUpPage() {
             router.push("/");
           } else {
             setSuccess("Account created! Please sign in.");
-            setTimeout(() => router.push("/auth/sign-in"), 2000);
+            setTimeout(() => router.push("/auth/signin"), 2000);
           }
         }, 1000);
       } else {
@@ -151,6 +254,58 @@ export default function SignUpPage() {
         {/* Sign Up Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="space-y-6">
+            {/* Avatar Upload Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                Profile Picture (Optional)
+              </label>
+
+              <div className="flex items-center gap-4">
+                {/* Avatar Preview */}
+                <div className="relative w-24 h-24 rounded-full bg-gray-100 overflow-hidden flex items-center justify-center border-2 border-gray-200">
+                  {avatarPreview ? (
+                    <Image
+                      src={avatarPreview}
+                      alt="Avatar preview"
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <User className="w-10 h-10 text-gray-400" />
+                  )}
+                </div>
+
+                {/* Upload/Remove Buttons */}
+                <div className="flex-1 space-y-2">
+                  <label className="cursor-pointer inline-flex items-center justify-center px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium w-full">
+                    <Upload className="w-4 h-4 mr-2" />
+                    {avatarFile ? "Change Photo" : "Upload Photo"}
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </label>
+
+                  {avatarFile && (
+                    <button
+                      type="button"
+                      onClick={removeAvatar}
+                      className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium w-full"
+                    >
+                      <X className="w-4 h-4 mr-2" />
+                      Remove
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <p className="text-xs text-gray-500 mt-2">
+                JPEG, PNG, or WebP. Max 2MB.
+              </p>
+            </div>
+
             {/* Name Fields */}
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -360,13 +515,13 @@ export default function SignUpPage() {
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              disabled={isLoading}
+              disabled={isLoading || uploadingAvatar}
               className="w-full bg-emerald-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Creating Account...
+                  {uploadingAvatar ? "Uploading avatar..." : "Creating Account..."}
                 </div>
               ) : (
                 "Create Account"
