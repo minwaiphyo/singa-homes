@@ -139,7 +139,7 @@ export default function CreateListingPage() {
   }
   if (status === "unauthenticated") {
     console.log("User not authenticated, redirecting to sign-in page");
-    router.push("/auth/signin");
+    router.push("/auth/sign-in");
     return null;
   }
 

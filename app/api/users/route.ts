@@ -2,62 +2,80 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Use the singleton instead of creating new instance
 import bcrypt from 'bcryptjs';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
-// GET - Fetch user profile by userId or email
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-    const email = searchParams.get('email');
+// No need
+// export async function GET(request: NextRequest) {
+//   console.log("received GET request for user profile");
 
-    if (!userId && !email) {
-      return NextResponse.json(
-        { error: 'Either userId or email is required' },
-        { status: 400 }
-      );
-    }
+//   //Validate session
+//   const session = await getServerSession(authOptions);
 
-    const user = await prisma.user.findUnique({
-      where: userId ? { id: userId } : { email: email! },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        age: true,
-        phone: true,
-        bio: true,
-        avatar: true,
-        isEmailVerified: true,
-        createdAt: true,
-        updatedAt: true,
-        _count: {
-          select: {
-            properties: true,
-            favorites: true,
-          },
-        },
-      },
-    });
+//   if (!session?.user?.id) {
+//     return NextResponse.json(
+//       { error: 'Unauthorized. Please sign in to view profile.' },
+//       { status: 401 }
+//     )
+//   };
 
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
-    }
+//   try {
+//     const body = await request.json();
+//     const { userId } = body;
 
-    return NextResponse.json({ user }, { status: 200 });
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-}
 
-// // POST - Create new user profile (This should probably be removed since registration handles user creation)
+
+//     if (!userId) {
+//       return NextResponse.json(
+//         { error: 'userId is required' },
+//         { status: 400 }
+//       );
+//     }
+
+//     const user = await prisma.user.findUnique({
+//       where: userId,
+//       select: {
+//         id: true,
+//         email: true,
+//         firstName: true,
+//         lastName: true,
+//         age: true,
+//         phone: true,
+//         bio: true,
+//         avatar: true,
+//         isEmailVerified: true,
+//         createdAt: true,
+//         updatedAt: true,
+//         _count: {
+//           select: {
+//             properties: true,
+//             favorites: true,
+//           },
+//         },
+//       },
+//     });
+
+//     if (!user) {
+//       return NextResponse.json(
+//         { error: 'User not found' },
+//         { status: 404 }
+//       );
+//     }
+
+//     return NextResponse.json({ user }, { status: 200 });
+//   } catch (error) {
+//     console.error('Error fetching profile:', error);
+//     return NextResponse.json(
+//       { error: 'Internal server error' },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+
+
+
+// POST - Create new user profile (This should probably be removed since registration handles user creation)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();

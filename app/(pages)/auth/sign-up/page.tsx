@@ -198,7 +198,7 @@ export default function SignUpPage() {
       console.log("data: ", data);
 
       if (response.ok) {
-
+      
         setSuccess("Account created successfully! Signing you in...");
 
         // Auto sign in after successful registration
@@ -213,7 +213,7 @@ export default function SignUpPage() {
             router.push("/");
           } else {
             setSuccess("Account created! Please sign in.");
-            setTimeout(() => router.push("/auth/signin"), 2000);
+            setTimeout(() => router.push("/auth/sign-in"), 2000);
           }
         }, 1000);
       } else {
@@ -523,7 +523,7 @@ export default function SignUpPage() {
             <p className="text-gray-600">
               Already have an account?{" "}
               <Link
-                href="/auth/signin"
+                href="/auth/sign-in"
                 className="text-emerald-600 hover:text-emerald-700 font-medium"
               >
                 Sign in here
