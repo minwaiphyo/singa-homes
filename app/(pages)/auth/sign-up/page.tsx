@@ -22,6 +22,7 @@ import { supabase } from "@/lib/supabase"
 
 
 
+
 export default function SignUpPage() {
 
 
@@ -167,6 +168,8 @@ export default function SignUpPage() {
     return true;
   };
 
+
+
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
@@ -174,41 +177,27 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      // Step 1: Create user account
-      const registrationData = {
-        email: formData.email,
-        password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        ...(formData.age && { age: parseInt(formData.age) }),
-        ...(formData.phone && { phone: formData.phone }),
-        avatar: null, // Will be updated after upload
-      };
+
+      console.log("formData: ", formData)
+      // Prepare FormData (includes both text & file fields)
+      const formDataToSend = new FormData();
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("firstName", formData.firstName);
+      formDataToSend.append("lastName", formData.lastName);
+      if (formData.age) formDataToSend.append("age", formData.age);
+      if (formData.phone) formDataToSend.append("phone", formData.phone);
+      if (avatarFile) formDataToSend.append("avatar",  avatarFile);
 
       const response = await fetch("/api/auth/sign-up", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(registrationData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
+      console.log("data: ", data);
 
       if (response.ok) {
-        // Step 2: If avatar was selected, upload it and update user
-        if (avatarFile && data.userId) {
-          const avatarUrl = await uploadAvatar(data.userId);
-
-          if (avatarUrl) {
-            // Update user with avatar URL
-            await fetch(`/api/users/${data.userId}`, {
-              method: "PATCH",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ avatar: avatarUrl }),
-            });
-          }
-        }
 
         setSuccess("Account created successfully! Signing you in...");
 
