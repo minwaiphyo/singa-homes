@@ -70,16 +70,7 @@ export default function NavBar() {
               <span>Create Listing</span>
             </Link>
 
-            {/* Favorites - Only visible if authenticated */}
-            {session && (
-              <Link
-                href="/favorites"
-                className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
-              >
-                <Heart className="w-4 h-4" />
-                <span>Favorites</span>
-              </Link>
-            )}
+            
 
             {/* Authentication Section */}
             {status === "loading" ? (
