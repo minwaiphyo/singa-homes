@@ -138,7 +138,7 @@ export async function POST(request: NextRequest) {
 //   }
 // }
 
-
+  
 // GET all properties OR user's own properties
 export async function GET(request: NextRequest) {
   try {

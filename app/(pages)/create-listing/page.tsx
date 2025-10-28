@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Upload } from "lucide-react";
 
 export default function CreateListingPage() {
   const { data: session, status } = useSession();
