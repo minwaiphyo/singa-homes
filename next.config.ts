@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         hostname: 'feowsnofuagwjwusfbyq.supabase.co',
         port: '',
         pathname: '/storage/v1/object/public/**',
+
       },
     ],
   },
