@@ -44,7 +44,6 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-
   const params = useParams();
 
   useEffect(() => {
@@ -79,8 +78,6 @@ export default function ProfilePage() {
     });
   };
 
-
-
   if (status === "loading" || isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -102,11 +99,7 @@ export default function ProfilePage() {
     );
   }
 
-
-
   //https://feowsnofuagwjwusfbyq.supabase.co/storage/v1/object/public/Avatar/avatars/40e4aae8-22d0-4a0a-96fe-0c5e0566c465.jpg
-  
-
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -140,7 +133,7 @@ export default function ProfilePage() {
 
               {/* Edit Button */}
               <button
-                onClick={() => router.push("/profile/edit")}
+                onClick={() => router.push(`/profile/${params.id}/edit`)}
                 className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
               >
                 <Edit className="w-4 h-4" />
@@ -248,7 +241,9 @@ export default function ProfilePage() {
                 <User className="w-5 h-5 text-gray-500" />
                 <div>
                   <p className="text-sm text-gray-600">Age</p>
-                  <p className="font-medium text-gray-900">{profile.age} years old</p>
+                  <p className="font-medium text-gray-900">
+                    {profile.age} years old
+                  </p>
                 </div>
               </div>
             )}
