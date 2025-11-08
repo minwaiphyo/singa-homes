@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import FavoriteButton from "@/components/FavoriteButton";
 
 interface PropertyImage {
   id: string;
@@ -312,6 +313,11 @@ export default function PropertyDetailPage() {
               {property.address}, {property.city}, {property.state}{" "}
               {property.zipCode}
             </p>
+          </div>
+
+          {/* Add to Favorites Button */}
+          <div>
+            <FavoriteButton propertyId={property.id} />
           </div>
 
           {/* Key Features */}

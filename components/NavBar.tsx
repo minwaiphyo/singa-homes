@@ -70,8 +70,6 @@ export default function NavBar() {
               <span>Create Listing</span>
             </Link>
 
-            
-
             {/* Authentication Section */}
             {status === "loading" ? (
               <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
@@ -123,7 +121,11 @@ export default function NavBar() {
                         </div>
 
                         <Link
-                          href={session ? `/profile/${session.user.id}` : "/auth/sign-in"}
+                          href={
+                            session
+                              ? `/profile/${session.user.id}`
+                              : "/auth/sign-in"
+                          }
                           className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                           onClick={closeProfileDropdown}
                         >
