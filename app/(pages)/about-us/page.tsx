@@ -76,12 +76,16 @@ export default function AboutPage() {
             direct real estate transactions
           </p>
           <div className="space-x-4">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-              List Your Property
-            </button>
-            <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-              Browse Properties
-            </button>
+            <a href="../create-listing">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                List Your Property
+              </button>
+            </a>
+            <a href="../properties">
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                Browse Properties
+              </button>
+            </a>
           </div>
         </div>
       </div>
