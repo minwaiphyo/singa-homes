@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import FavoriteButton from "@/components/FavoriteButton";
+import EditPropertyButton from "@/components/EditPropertyButton";
 
 interface PropertyImage {
   id: string;
@@ -316,8 +317,9 @@ export default function PropertyDetailPage() {
           </div>
 
           {/* Add to Favorites Button */}
-          <div>
+          <div className="flex gap-4">
             <FavoriteButton propertyId={property.id} />
+            <EditPropertyButton propertyId={property.id} />
           </div>
 
           {/* Key Features */}
@@ -573,9 +575,6 @@ export default function PropertyDetailPage() {
                       className="w-full bg-blue-600 text-white py-3 px-4 rounded hover:bg-blue-700 font-medium"
                     >
                       Send Message
-                    </button>
-                    <button className="w-full border-2 border-blue-600 text-blue-600 py-3 px-4 rounded hover:bg-blue-50 font-medium">
-                      ♥ Save to Favorites
                     </button>
                   </>
                 ) : (

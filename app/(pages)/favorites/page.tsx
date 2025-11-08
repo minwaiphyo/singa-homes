@@ -166,7 +166,7 @@ export default function FavoritesPage() {
                 key={property.id}
                 className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-100 group"
               >
-                <div className="flex flex-col md:flex-row">
+                <div className="flex flex-col md:flex-row overflow-hidden gap-4">
                   {/* Property Image */}
                   <div
                     onClick={() => router.push(`/properties/${property.id}`)}

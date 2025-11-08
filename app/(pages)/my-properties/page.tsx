@@ -191,7 +191,7 @@ export default function MyPropertiesPage() {
             {properties.map((property) => (
               <div
                 key={property.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow"
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow gap-4 md:gap-0"
               >
                 {/* Property Image */}
                 <div className="relative h-48 bg-gray-200">
@@ -269,7 +269,7 @@ export default function MyPropertiesPage() {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 p-5">
                     <button
                       onClick={() => router.push(`/properties/${property.id}`)}
                       className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm"
@@ -289,7 +289,9 @@ export default function MyPropertiesPage() {
                     </button>
 
                     <button
-                      onClick={() => toggleActive(property.id, property.isActive)}
+                      onClick={() =>
+                        toggleActive(property.id, property.isActive)
+                      }
                       className="flex items-center justify-center gap-2 px-3 py-2 border border-emerald-600 text-emerald-600 rounded hover:bg-emerald-50 transition-colors text-sm"
                     >
                       {property.isActive ? (
