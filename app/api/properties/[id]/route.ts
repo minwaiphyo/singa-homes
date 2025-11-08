@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 
+
+// GET - Fetch property's details by ID
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -47,7 +49,7 @@ export async function GET(
   }
 }
 
-// PATCH - Update property
+// PATCH - Update property's details by ID
 export async function PATCH(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -146,54 +148,54 @@ export async function PATCH(
   }
 }
 
-// DELETE property 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const session = await getServerSession(authOptions);
+// DELETE property by ID 
+// export async function DELETE(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const session = await getServerSession(authOptions);
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+//   if (!session?.user?.id) {
+//     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+//   }
 
-  try {
-    const { id } = params;
+//   try {
+//     const { id } = params;
 
-    // Check if user owns this property
-    const property = await prisma.property.findUnique({
-      where: { id },
-      select: { sellerId: true },
-    });
+//     // Check if user owns this property
+//     const property = await prisma.property.findUnique({
+//       where: { id },
+//       select: { sellerId: true },
+//     });
 
-    if (!property) {
-      return NextResponse.json(
-        { error: 'Property not found' },
-        { status: 404 }
-      );
-    }
+//     if (!property) {
+//       return NextResponse.json(
+//         { error: 'Property not found' },
+//         { status: 404 }
+//       );
+//     }
 
-    if (property.sellerId !== session.user.id) {
-      return NextResponse.json(
-        { error: 'You can only delete your own properties' },
-        { status: 403 }
-      );
-    }
+//     if (property.sellerId !== session.user.id) {
+//       return NextResponse.json(
+//         { error: 'You can only delete your own properties' },
+//         { status: 403 }
+//       );
+//     }
 
-    // Delete property (images will be cascade deleted due to Prisma schema)
-    await prisma.property.delete({
-      where: { id },
-    });
+//     // Delete property (images will be cascade deleted due to Prisma schema)
+//     await prisma.property.delete({
+//       where: { id },
+//     });
 
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Property deleted successfully' 
-    });
-  } catch (error) {
-    console.error('Error deleting property:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete property' },
-      { status: 500 }
-    );
-  }
-}
+//     return NextResponse.json({ 
+//       success: true, 
+//       message: 'Property deleted successfully' 
+//     });
+//   } catch (error) {
+//     console.error('Error deleting property:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to delete property' },
+//       { status: 500 }
+//     );
+//   }
+// }

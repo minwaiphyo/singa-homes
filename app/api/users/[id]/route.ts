@@ -6,7 +6,6 @@ import { authOptions } from '@/lib/auth';
 
 
 // GET - Fetch current user profile
-
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
 
   //Validate session
@@ -67,3 +66,62 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     );
   }
 }
+
+// PATCH - Update user profile
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id } = params;
+    const body = await request.json();
+
+    // Check if user is updating their own profile
+    if (id !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only update your own profile' },
+        { status: 403 }
+      );
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        age: body.age,
+        phone: body.phone,
+        bio: body.bio,
+        avatar: body.avatar,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        age: true,
+        phone: true,
+        bio: true,
+        avatar: true,
+        isEmailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    return NextResponse.json({ user: updatedUser }, { status: 200 });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return NextResponse.json(
+      { error: 'Failed to update profile' },
+      { status: 500 }
+    );
+  }
+};
+    

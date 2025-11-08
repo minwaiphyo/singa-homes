@@ -79,67 +79,6 @@ export async function POST(request: NextRequest) {
 
 }
 
-// 2 scenarios - Fetch user's own properties or fetch all active properties with filters
-// export async function GET(request: NextRequest) {
-//   try {
-//     const { searchParams } = new URL(request.url);
-    
-//     // Optional filters
-//     const propertyType = searchParams.get('propertyType');
-//     const listingType = searchParams.get('listingType');
-//     const city = searchParams.get('city');
-//     const minPrice = searchParams.get('minPrice');
-//     const maxPrice = searchParams.get('maxPrice');
-
-//     const properties = await prisma.property.findMany({
-//       where: {
-//         isActive: true,
-//         ...(propertyType && { propertyType: propertyType as any }),
-//         ...(listingType && { listingType: listingType as any }),
-//         ...(city && { city: { contains: city, mode: 'insensitive' } }),
-//         ...(minPrice && { price: { gte: parseFloat(minPrice) } }),
-//         ...(maxPrice && { price: { lte: parseFloat(maxPrice) } }),
-//       },
-//       select: {
-//         id: true,
-//         title: true,
-//         price: true,
-//         propertyType: true,
-//         listingType: true,
-//         city: true,
-//         state: true,
-//         bedrooms: true,
-//         bathrooms: true,
-//         area: true,
-//         isFeatured: true,
-//         createdAt: true,
-//         images: {
-//           where: { isPrimary: true },
-//           take: 1,
-//           select: {
-//             url: true,
-//             altText: true,
-//           },
-//         },
-//       },
-//       orderBy: [
-//         { isFeatured: 'desc' },
-//         { createdAt: 'desc' },
-//       ],
-//     });
-
-//     return NextResponse.json(properties);
-//   } catch (error) {
-//     console.error('Error fetching properties:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to fetch properties' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-  
-// GET all properties OR user's own properties
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -252,80 +191,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-
-
-// PATCH - Update property
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  try {
-    const { id } = params;
-    const body = await request.json();
-
-    // Check if user owns this property
-    const property = await prisma.property.findUnique({
-      where: { id },
-      select: { sellerId: true },
-    });
-
-    if (!property) {
-      return NextResponse.json(
-        { error: 'Property not found' },
-        { status: 404 }
-      );
-    }
-
-    if (property.sellerId !== session.user.id) {
-      return NextResponse.json(
-        { error: 'You can only update your own properties' },
-        { status: 403 }
-      );
-    }
-
-    // Update property
-    const updatedProperty = await prisma.property.update({
-      where: { id },
-      data: {
-        ...(body.title !== undefined && { title: body.title }),
-        ...(body.description !== undefined && { description: body.description }),
-        ...(body.price !== undefined && { price: Number(body.price) }),
-        ...(body.area !== undefined && { area: Number(body.area) }),
-        ...(body.bedrooms !== undefined && { bedrooms: body.bedrooms ? Number(body.bedrooms) : null }),
-        ...(body.bathrooms !== undefined && { bathrooms: body.bathrooms ? Number(body.bathrooms) : null }),
-        ...(body.propertyType !== undefined && { propertyType: body.propertyType }),
-        ...(body.listingType !== undefined && { listingType: body.listingType }),
-        ...(body.address !== undefined && { address: body.address }),
-        ...(body.city !== undefined && { city: body.city }),
-        ...(body.state !== undefined && { state: body.state }),
-        ...(body.zipCode !== undefined && { zipCode: body.zipCode }),
-        ...(body.country !== undefined && { country: body.country }),
-        ...(body.leaseYearsLeft !== undefined && { leaseYearsLeft: body.leaseYearsLeft ? Number(body.leaseYearsLeft) : null }),
-        ...(body.isActive !== undefined && { isActive: body.isActive }),
-        ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
-      },
-      include: {
-        images: true,
-      },
-    });
-
-    return NextResponse.json(updatedProperty);
-  } catch (error) {
-    console.error('Error updating property:', error);
-    return NextResponse.json(
-      { error: 'Failed to update property' },
-      { status: 500 }
-    );
-  }
-}
-
-
 // DELETE property
 export async function DELETE(
   request: NextRequest,
@@ -374,3 +239,74 @@ export async function DELETE(
     );
   }
 }
+
+// PATCH - Update property
+// export async function PATCH(
+//   request: NextRequest,
+//   { params }: { params: { id: string } }
+// ) {
+//   const session = await getServerSession(authOptions);
+
+//   if (!session?.user?.id) {
+//     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+//   }
+
+//   try {
+//     const { id } = params;
+//     const body = await request.json();
+
+//     // Check if user owns this property
+//     const property = await prisma.property.findUnique({
+//       where: { id },
+//       select: { sellerId: true },
+//     });
+
+//     if (!property) {
+//       return NextResponse.json(
+//         { error: 'Property not found' },
+//         { status: 404 }
+//       );
+//     }
+
+//     if (property.sellerId !== session.user.id) {
+//       return NextResponse.json(
+//         { error: 'You can only update your own properties' },
+//         { status: 403 }
+//       );
+//     }
+
+//     // Update property
+//     const updatedProperty = await prisma.property.update({
+//       where: { id },
+//       data: {
+//         ...(body.title !== undefined && { title: body.title }),
+//         ...(body.description !== undefined && { description: body.description }),
+//         ...(body.price !== undefined && { price: Number(body.price) }),
+//         ...(body.area !== undefined && { area: Number(body.area) }),
+//         ...(body.bedrooms !== undefined && { bedrooms: body.bedrooms ? Number(body.bedrooms) : null }),
+//         ...(body.bathrooms !== undefined && { bathrooms: body.bathrooms ? Number(body.bathrooms) : null }),
+//         ...(body.propertyType !== undefined && { propertyType: body.propertyType }),
+//         ...(body.listingType !== undefined && { listingType: body.listingType }),
+//         ...(body.address !== undefined && { address: body.address }),
+//         ...(body.city !== undefined && { city: body.city }),
+//         ...(body.state !== undefined && { state: body.state }),
+//         ...(body.zipCode !== undefined && { zipCode: body.zipCode }),
+//         ...(body.country !== undefined && { country: body.country }),
+//         ...(body.leaseYearsLeft !== undefined && { leaseYearsLeft: body.leaseYearsLeft ? Number(body.leaseYearsLeft) : null }),
+//         ...(body.isActive !== undefined && { isActive: body.isActive }),
+//         ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
+//       },
+//       include: {
+//         images: true,
+//       },
+//     });
+
+//     return NextResponse.json(updatedProperty);
+//   } catch (error) {
+//     console.error('Error updating property:', error);
+//     return NextResponse.json(
+//       { error: 'Failed to update property' },
+//       { status: 500 }
+//     );
+//   }
+// }
