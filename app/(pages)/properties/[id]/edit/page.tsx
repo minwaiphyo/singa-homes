@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { Upload, X, Star, Home, Save, ArrowLeft } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 
 interface PropertyImage {
   id: string;
@@ -50,8 +49,6 @@ export default function EditPropertyPage() {
   // New images to upload
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
-  const [uploadingImages, setUploadingImages] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string>("");
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -117,8 +114,8 @@ export default function EditPropertyPage() {
   ) => {
     const target = e.target;
     const value =
-      target.type === "checkbox"
-        ? (target as HTMLInputElement).checked
+      target.type === "checkbox" && target instanceof HTMLInputElement
+        ? target.checked
         : target.value;
     const name = target.name;
 
@@ -186,54 +183,6 @@ export default function EditPropertyPage() {
     setExistingImages(newImages);
   };
 
-  // Upload new images to Supabase
-  const uploadNewImages = async (): Promise<string[]> => {
-    if (newImageFiles.length === 0) return [];
-
-    setUploadingImages(true);
-    const uploadedUrls: string[] = [];
-
-    try {
-      for (let i = 0; i < newImageFiles.length; i++) {
-        const file = newImageFiles[i];
-        setUploadProgress(
-          `Uploading image ${i + 1} of ${newImageFiles.length}...`
-        );
-
-        const fileExt = file.name.split(".").pop();
-        const fileName = `propertyimages/${propertyId}/${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(7)}.${fileExt}`;
-
-        const { data, error } = await supabase.storage
-          .from("PropertyImages")
-          .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (error) {
-          console.error(`Failed to upload ${file.name}:`, error);
-          continue;
-        }
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("PropertyImages").getPublicUrl(fileName);
-
-        uploadedUrls.push(publicUrl);
-      }
-
-      setUploadProgress(`Successfully uploaded ${uploadedUrls.length} images!`);
-      return uploadedUrls;
-    } catch (error) {
-      console.error("Upload error:", error);
-      return [];
-    } finally {
-      setUploadingImages(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
@@ -241,6 +190,9 @@ export default function EditPropertyPage() {
     setSuccess("");
 
     try {
+      // Determine if images are being replaced
+      const replaceImages = newImageFiles.length > 0;
+
       // Validate
       const totalImages = existingImages.length + newImageFiles.length;
       if (totalImages === 0) {
@@ -255,64 +207,51 @@ export default function EditPropertyPage() {
         return;
       }
 
-      // Upload new images if any
-      let newImageUrls: string[] = [];
-      if (newImageFiles.length > 0) {
-        newImageUrls = await uploadNewImages();
+      // Create FormData object
+      const submitData = new FormData();
+
+      // Append property data
+      submitData.append("title", formData.title);
+      submitData.append("description", formData.description || "");
+      submitData.append("price", formData.price);
+      submitData.append("area", formData.area);
+      submitData.append("bedrooms", formData.bedrooms || "");
+      submitData.append("bathrooms", formData.bathrooms || "");
+      submitData.append("propertyType", formData.propertyType);
+      submitData.append("listingType", formData.listingType);
+      submitData.append("address", formData.address);
+      submitData.append("city", formData.city);
+      submitData.append("state", formData.state);
+      submitData.append("zipCode", formData.zipCode);
+      submitData.append("country", formData.country);
+      submitData.append("leaseYearsLeft", formData.leaseYearsLeft || "");
+      submitData.append("isActive", formData.isActive.toString());
+      submitData.append("isFeatured", formData.isFeatured.toString());
+
+      // Add replaceImages parameter
+      submitData.append("replaceImages", replaceImages.toString());
+
+      // If replacing images, append new image files
+      if (replaceImages) {
+        newImageFiles.forEach((file, index) => {
+          submitData.append(`image_${index}`, file);
+        });
       }
 
-      // Combine existing and new images
-      const allImages = [
-        ...existingImages.map((img, index) => ({
-          url: img.url,
-          altText: img.altText,
-          isPrimary: img.isPrimary,
-          order: index,
-        })),
-        ...newImageUrls.map((url, index) => ({
-          url,
-          altText: null,
-          isPrimary: existingImages.length === 0 && index === 0, // First new image is primary if no existing images
-          order: existingImages.length + index,
-        })),
-      ];
-
-      // Prepare update data
-      const updateData = {
-        title: formData.title,
-        description: formData.description || null,
-        price: parseFloat(formData.price),
-        area: parseFloat(formData.area),
-        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
-        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
-        propertyType: formData.propertyType,
-        listingType: formData.listingType,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        country: formData.country,
-        leaseYearsLeft:
-          formData.propertyType === "HDB" && formData.leaseYearsLeft
-            ? parseInt(formData.leaseYearsLeft)
-            : null,
-        isActive: formData.isActive,
-        isFeatured: formData.isFeatured,
-        images: allImages,
-      };
-
+      // Submit to API
       const response = await fetch(`/api/properties/${propertyId}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateData),
+        body: submitData,
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess("Property updated successfully!");
+        setSuccess(data.message || "Property updated successfully!");
+
+        // Clean up image preview URLs
+        newImagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+
         setTimeout(() => {
           router.push("/my-properties");
         }, 1500);
@@ -324,7 +263,6 @@ export default function EditPropertyPage() {
       console.error(err);
     } finally {
       setIsSaving(false);
-      setUploadProgress("");
     }
   };
 
@@ -472,18 +410,10 @@ export default function EditPropertyPage() {
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     multiple
                     onChange={handleNewImageChange}
-                    disabled={uploadingImages}
                     className="hidden"
                   />
                 </div>
               </label>
-
-              {uploadProgress && (
-                <div className="mt-4 flex items-center justify-center text-emerald-600">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-emerald-600 border-t-transparent mr-2"></div>
-                  <span className="text-sm font-medium">{uploadProgress}</span>
-                </div>
-              )}
             </div>
           </div>
 
@@ -774,15 +704,13 @@ export default function EditPropertyPage() {
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={isSaving || uploadingImages}
+              disabled={isSaving}
               className="flex-1 bg-gradient-to-r from-emerald-600 to-blue-600 text-white text-lg font-semibold py-4 px-6 rounded-xl hover:from-emerald-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl flex items-center justify-center"
             >
               {isSaving ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
-                  {uploadingImages
-                    ? "Uploading images..."
-                    : "Saving changes..."}
+                  Saving changes...
                 </>
               ) : (
                 <>

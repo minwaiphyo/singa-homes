@@ -6,8 +6,8 @@ properties/route.ts
 
 
 properties/[id]/route.ts
-- GET (get a specific property)				
-- PATCH (edit property details)								==> 	remove/add image to supabase
+- GET (get a specific property)				                                                        (DONE)
+- PATCH (edit property details)								==> 	remove/add image to supabase    
 - DELETE (delete a  property)								==>  	remove image from supabase      (DONE)   
 
 

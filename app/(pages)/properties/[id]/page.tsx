@@ -507,9 +507,13 @@ export default function PropertyDetailPage() {
                 Manage Your Listing
               </h3>
               <div className="flex gap-3">
-                <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                <button
+                  onClick={() => router.push(`/properties/${property.id}/edit`)}
+                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                >
                   Edit Property
                 </button>
+
                 <button
                   onClick={() => handleDeleteProperty(property.id)}
                   className="border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50"

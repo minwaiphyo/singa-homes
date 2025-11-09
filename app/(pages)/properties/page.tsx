@@ -48,6 +48,7 @@ export default function PropertiesPage() {
         if (value) params.append(key, value);
       });
 
+      // No method specified - defaults to GET request
       const response = await fetch(`/api/properties?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
