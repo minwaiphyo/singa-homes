@@ -12,7 +12,7 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } =  params;
 
     const property = await prisma.property.findUnique({
       where: { id },
