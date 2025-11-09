@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth';
 
 
 // GET - Fetch current user profile
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest) {
 
   //Validate session
   const session = await getServerSession(authOptions);
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   };
 
   try {
-    const { id } = await params;
+    const id = request.nextUrl.pathname.split('/').pop();
     if (!id) {
       return NextResponse.json(
         { error: 'userId is required' },
@@ -70,7 +70,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 // PATCH - Update user profile
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -79,7 +78,7 @@ export async function PATCH(
   }
 
   try {
-    const { id } = params;
+    const id = request.nextUrl.pathname.split('/').pop();
     const body = await request.json();
 
     // Check if user is updating their own profile
