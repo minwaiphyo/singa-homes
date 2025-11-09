@@ -44,8 +44,6 @@ export default function CreateListingPage() {
   // Image Upload State
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [uploadingImages, setUploadingImages] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<string>("");
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -119,53 +117,6 @@ export default function CreateListingPage() {
     setImagePreviews(newPreviews);
   };
 
-  const uploadImages = async (propertyId: string): Promise<string[]> => {
-    if (imageFiles.length === 0) return [];
-
-    setUploadingImages(true);
-    const uploadedUrls: string[] = [];
-
-    try {
-      for (let i = 0; i < imageFiles.length; i++) {
-        const file = imageFiles[i];
-        setUploadProgress(
-          `Uploading image ${i + 1} of ${imageFiles.length}...`
-        );
-
-        const fileExt = file.name.split(".").pop();
-        const fileName = `propertyimages/${propertyId}/${Date.now()}-${Math.random()
-          .toString(36)
-          .substring(7)}.${fileExt}`;
-
-        const { data, error } = await supabase.storage
-          .from("PropertyImages")
-          .upload(fileName, file, {
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (error) {
-          console.error(`Failed to upload ${file.name}:`, error);
-          continue;
-        }
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("PropertyImages").getPublicUrl(fileName);
-
-        uploadedUrls.push(publicUrl);
-      }
-
-      setUploadProgress(`Successfully uploaded ${uploadedUrls.length} images!`);
-      return uploadedUrls;
-    } catch (error) {
-      console.error("Upload error:", error);
-      return [];
-    } finally {
-      setUploadingImages(false);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -184,35 +135,34 @@ export default function CreateListingPage() {
         return;
       }
 
-      const propertyData = {
-        title: formData.title,
-        description: formData.description || null,
-        price: parseFloat(formData.price),
-        area: parseFloat(formData.area),
-        bedrooms: formData.bedrooms ? parseInt(formData.bedrooms) : null,
-        bathrooms: formData.bathrooms ? parseInt(formData.bathrooms) : null,
-        propertyType: formData.propertyType,
-        listingType: formData.listingType,
-        address: formData.address,
-        city: formData.city,
-        state: formData.state,
-        zipCode: formData.zipCode,
-        country: formData.country,
-        leaseYearsLeft:
-          formData.propertyType === "HDB" && formData.leaseYearsLeft
-            ? parseInt(formData.leaseYearsLeft)
-            : null,
-        isActive: formData.isActive,
-        isFeatured: formData.isFeatured,
-        images: [],
-      };
+      const submitData = new FormData();
 
+      submitData.append("title", formData.title);
+      submitData.append("description", formData.description || "");
+      submitData.append("price", formData.price);
+      submitData.append("area", formData.area);
+      submitData.append("bedrooms", formData.bedrooms || "");
+      submitData.append("bathrooms", formData.bathrooms || "");
+      submitData.append("propertyType", formData.propertyType);
+      submitData.append("listingType", formData.listingType);
+      submitData.append("address", formData.address);
+      submitData.append("city", formData.city);
+      submitData.append("state", formData.state);
+      submitData.append("zipCode", formData.zipCode);
+      submitData.append("country", formData.country);
+      submitData.append("leaseYearsLeft", formData.leaseYearsLeft || "");
+      submitData.append("isActive", formData.isActive.toString());
+      submitData.append("isFeatured", formData.isFeatured.toString());
+
+      //Append image files
+      imageFiles.forEach((file, index) => {
+        submitData.append(`image_${index}`, file);
+      });
+
+      // Submit to API
       const response = await fetch("/api/properties", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(propertyData),
+        body: submitData,
       });
 
       const data = await response.json();
@@ -223,41 +173,11 @@ export default function CreateListingPage() {
         return;
       }
 
-      const propertyId = data.property.id;
-      const imageUrls = await uploadImages(propertyId);
-
-      if (imageUrls.length === 0) {
-        setError(
-          "Property created but image upload failed. Please edit the property to add images."
-        );
-        setTimeout(() => router.push(`/properties/${propertyId}/edit`), 2000);
-        return;
-      }
-
-      const updateResponse = await fetch(`/api/properties/${propertyId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          images: imageUrls.map((url, index) => ({
-            url,
-            altText: null,
-            isPrimary: index === 0,
-            order: index,
-          })),
-        }),
-      });
-
-      if (!updateResponse.ok) {
-        setError(
-          "Property created but failed to attach images. Please edit to add images."
-        );
-        setTimeout(() => router.push(`/properties/${propertyId}/edit`), 2000);
-        return;
-      }
-
       setSuccess("Property created successfully!");
+
+      // Clean up image preview URLs
+      imagePreviews.forEach((preview) => URL.revokeObjectURL(preview));
+
       setTimeout(() => {
         router.push("/my-properties");
       }, 1500);
@@ -266,7 +186,6 @@ export default function CreateListingPage() {
       console.error(err);
     } finally {
       setIsLoading(false);
-      setUploadProgress("");
     }
   };
 
@@ -282,6 +201,434 @@ export default function CreateListingPage() {
     router.push("/auth/signin");
     return null;
   }
+
+  // return (
+  //   <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 py-12">
+  //     <div className="max-w-4xl mx-auto px-4">
+  //       {/* Header */}
+  //       <div className="text-center mb-10">
+  //         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl mb-4 shadow-lg">
+  //           <Home className="w-8 h-8 text-white" />
+  //         </div>
+  //         <h1 className="text-4xl font-bold text-gray-900 mb-2">
+  //           Create Property Listing
+  //         </h1>
+  //         <p className="text-gray-600">
+  //           Fill in the details to list your property
+  //         </p>
+  //       </div>
+
+  //       <form onSubmit={handleSubmit} className="space-y-8">
+  //         {/* Property Images Section */}
+  //         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+  //           <div className="flex items-center mb-6">
+  //             <Camera className="w-6 h-6 text-emerald-600 mr-3" />
+  //             <h2 className="text-2xl font-bold text-gray-900">
+  //               Property Images *
+  //             </h2>
+  //           </div>
+
+  //           <div className="mb-6">
+  //             <label className="cursor-pointer group">
+  //               <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-emerald-500 hover:bg-emerald-50 transition-all">
+  //                 <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+  //                 <p className="text-lg font-semibold text-gray-700 mb-2">
+  //                   {imageFiles.length === 0
+  //                     ? "Click to upload images"
+  //                     : "Add more images"}
+  //                 </p>
+  //                 <p className="text-sm text-gray-500">
+  //                   JPEG, PNG, or WebP. Max 5MB per image. Up to 10 images.
+  //                 </p>
+  //                 <input
+  //                   type="file"
+  //                   accept="image/jpeg,image/jpg,image/png,image/webp"
+  //                   multiple
+  //                   onChange={handleImageChange}
+  //                   disabled={uploadingImages || imageFiles.length >= 10}
+  //                   className="hidden"
+  //                 />
+  //               </div>
+  //             </label>
+
+  //             {uploadProgress && (
+  //               <div className="mt-4 flex items-center justify-center text-emerald-600">
+  //                 <div className="animate-spin rounded-full h-5 w-5 border-2 border-emerald-600 border-t-transparent mr-2"></div>
+  //                 <span className="text-sm font-medium">{uploadProgress}</span>
+  //               </div>
+  //             )}
+  //           </div>
+
+  //           {imagePreviews.length > 0 && (
+  //             <div>
+  //               <p className="text-sm font-semibold text-gray-700 mb-4">
+  //                 Selected Images ({imagePreviews.length}/10)
+  //               </p>
+  //               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  //                 {imagePreviews.map((preview, index) => (
+  //                   <div key={index} className="relative group">
+  //                     <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-gray-200 shadow-md">
+  //                       <Image
+  //                         src={preview}
+  //                         alt={`Property image ${index + 1}`}
+  //                         fill
+  //                         className="object-cover"
+  //                       />
+
+  //                       {index === 0 && (
+  //                         <span className="absolute top-2 left-2 bg-gradient-to-r from-emerald-500 to-blue-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-lg">
+  //                           Primary
+  //                         </span>
+  //                       )}
+
+  //                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all flex items-center justify-center gap-2">
+  //                         {index !== 0 && (
+  //                           <button
+  //                             type="button"
+  //                             onClick={() => setPrimaryImage(index)}
+  //                             className="opacity-0 group-hover:opacity-100 bg-white text-gray-700 rounded-full p-2 hover:bg-emerald-100 transition-all shadow-lg"
+  //                             title="Set as primary"
+  //                           >
+  //                             <Star className="w-5 h-5" />
+  //                           </button>
+  //                         )}
+  //                         <button
+  //                           type="button"
+  //                           onClick={() => removeImage(index)}
+  //                           className="opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all shadow-lg"
+  //                           title="Remove image"
+  //                         >
+  //                           <X className="w-5 h-5" />
+  //                         </button>
+  //                       </div>
+  //                     </div>
+  //                   </div>
+  //                 ))}
+  //               </div>
+  //             </div>
+  //           )}
+  //         </div>
+
+  //         {/* Basic Information */}
+  //         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+  //           <div className="flex items-center mb-6">
+  //             <Home className="w-6 h-6 text-emerald-600 mr-3" />
+  //             <h2 className="text-2xl font-bold text-gray-900">
+  //               Basic Information
+  //             </h2>
+  //           </div>
+
+  //           <div className="space-y-6">
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Property Title *
+  //               </label>
+  //               <input
+  //                 type="text"
+  //                 name="title"
+  //                 value={formData.title}
+  //                 onChange={handleChange}
+  //                 required
+  //                 placeholder="e.g., Spacious 3-Bedroom HDB in Jurong"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Description
+  //               </label>
+  //               <textarea
+  //                 name="description"
+  //                 value={formData.description}
+  //                 onChange={handleChange}
+  //                 rows={4}
+  //                 placeholder="Describe your property..."
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  //               <div>
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   Property Type *
+  //                 </label>
+  //                 <select
+  //                   name="propertyType"
+  //                   value={formData.propertyType}
+  //                   onChange={handleChange}
+  //                   required
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 >
+  //                   <option value="HDB">HDB</option>
+  //                   <option value="CONDO">Condo</option>
+  //                   <option value="LANDED">Landed</option>
+  //                 </select>
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   Listing Type *
+  //                 </label>
+  //                 <select
+  //                   name="listingType"
+  //                   value={formData.listingType}
+  //                   onChange={handleChange}
+  //                   required
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 >
+  //                   <option value="SALE">For Sale</option>
+  //                   <option value="RENT">For Rent</option>
+  //                 </select>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+
+  //         {/* Pricing & Details */}
+  //         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+  //           <div className="flex items-center mb-6">
+  //             <DollarSign className="w-6 h-6 text-emerald-600 mr-3" />
+  //             <h2 className="text-2xl font-bold text-gray-900">
+  //               Pricing & Details
+  //             </h2>
+  //           </div>
+
+  //           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Price (
+  //                 {formData.listingType === "RENT" ? "per month" : "total"}) *
+  //               </label>
+  //               <input
+  //                 type="number"
+  //                 name="price"
+  //                 value={formData.price}
+  //                 onChange={handleChange}
+  //                 required
+  //                 min="0"
+  //                 step="0.01"
+  //                 placeholder="500000"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Area (sq ft) *
+  //               </label>
+  //               <input
+  //                 type="number"
+  //                 name="area"
+  //                 value={formData.area}
+  //                 onChange={handleChange}
+  //                 required
+  //                 min="0"
+  //                 step="0.01"
+  //                 placeholder="1000"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Bedrooms
+  //               </label>
+  //               <input
+  //                 type="number"
+  //                 name="bedrooms"
+  //                 value={formData.bedrooms}
+  //                 onChange={handleChange}
+  //                 min="0"
+  //                 placeholder="3"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Bathrooms
+  //               </label>
+  //               <input
+  //                 type="number"
+  //                 name="bathrooms"
+  //                 value={formData.bathrooms}
+  //                 onChange={handleChange}
+  //                 min="0"
+  //                 placeholder="2"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             {formData.propertyType === "HDB" && (
+  //               <div className="md:col-span-2">
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   Lease Years Left *
+  //                 </label>
+  //                 <input
+  //                   type="number"
+  //                   name="leaseYearsLeft"
+  //                   value={formData.leaseYearsLeft}
+  //                   onChange={handleChange}
+  //                   required={formData.propertyType === "HDB"}
+  //                   min="1"
+  //                   max="99"
+  //                   placeholder="90"
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 />
+  //               </div>
+  //             )}
+  //           </div>
+  //         </div>
+
+  //         {/* Location */}
+  //         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+  //           <div className="flex items-center mb-6">
+  //             <MapPin className="w-6 h-6 text-emerald-600 mr-3" />
+  //             <h2 className="text-2xl font-bold text-gray-900">Location</h2>
+  //           </div>
+
+  //           <div className="space-y-6">
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Address *
+  //               </label>
+  //               <input
+  //                 type="text"
+  //                 name="address"
+  //                 value={formData.address}
+  //                 onChange={handleChange}
+  //                 required
+  //                 placeholder="123 Main Street"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+
+  //             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+  //               <div>
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   City *
+  //                 </label>
+  //                 <input
+  //                   type="text"
+  //                   name="city"
+  //                   value={formData.city}
+  //                   onChange={handleChange}
+  //                   required
+  //                   placeholder="Singapore"
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 />
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   State *
+  //                 </label>
+  //                 <input
+  //                   type="text"
+  //                   name="state"
+  //                   value={formData.state}
+  //                   onChange={handleChange}
+  //                   required
+  //                   placeholder="Singapore"
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 />
+  //               </div>
+
+  //               <div>
+  //                 <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                   ZIP Code *
+  //                 </label>
+  //                 <input
+  //                   type="text"
+  //                   name="zipCode"
+  //                   value={formData.zipCode}
+  //                   onChange={handleChange}
+  //                   required
+  //                   placeholder="123456"
+  //                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //                 />
+  //               </div>
+  //             </div>
+
+  //             <div>
+  //               <label className="block text-sm font-semibold text-gray-700 mb-2">
+  //                 Country
+  //               </label>
+  //               <input
+  //                 type="text"
+  //                 name="country"
+  //                 value={formData.country}
+  //                 onChange={handleChange}
+  //                 placeholder="Singapore"
+  //                 className="w-full border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+  //               />
+  //             </div>
+  //           </div>
+  //         </div>
+
+  //         {/* Settings */}
+  //         <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+  //           <h2 className="text-xl font-bold text-gray-900 mb-6">Settings</h2>
+
+  //           <div className="space-y-4">
+  //             <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-all">
+  //               <input
+  //                 type="checkbox"
+  //                 name="isActive"
+  //                 checked={formData.isActive}
+  //                 onChange={handleChange}
+  //                 className="w-5 h-5 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-200"
+  //               />
+  //               <span className="ml-3 text-gray-700 font-medium">
+  //                 Active (visible to buyers)
+  //               </span>
+  //             </label>
+
+  //             <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-all">
+  //               <input
+  //                 type="checkbox"
+  //                 name="isFeatured"
+  //                 checked={formData.isFeatured}
+  //                 onChange={handleChange}
+  //                 className="w-5 h-5 text-emerald-600 rounded focus:ring-2 focus:ring-emerald-200"
+  //               />
+  //               <span className="ml-3 text-gray-700 font-medium">
+  //                 Featured listing
+  //               </span>
+  //             </label>
+  //           </div>
+  //         </div>
+
+  //         {/* Messages */}
+  //         {error && (
+  //           <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+  //             <p className="text-red-700 font-medium">{error}</p>
+  //           </div>
+  //         )}
+
+  //         {success && (
+  //           <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
+  //             <p className="text-green-700 font-medium">{success}</p>
+  //           </div>
+  //         )}
+
+  //         {/* Submit Button */}
+  //         <button
+  //           type="submit"
+  //           disabled={isLoading || uploadingImages}
+  //           className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 text-white text-lg font-semibold py-4 px-6 rounded-xl hover:from-emerald-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
+  //         >
+  //           {isLoading
+  //             ? uploadingImages
+  //               ? "Uploading images..."
+  //               : "Creating property..."
+  //             : "Create Listing"}
+  //         </button>
+  //       </form>
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 py-12">
@@ -326,18 +673,11 @@ export default function CreateListingPage() {
                     accept="image/jpeg,image/jpg,image/png,image/webp"
                     multiple
                     onChange={handleImageChange}
-                    disabled={uploadingImages || imageFiles.length >= 10}
+                    disabled={imageFiles.length >= 10}
                     className="hidden"
                   />
                 </div>
               </label>
-
-              {uploadProgress && (
-                <div className="mt-4 flex items-center justify-center text-emerald-600">
-                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-emerald-600 border-t-transparent mr-2"></div>
-                  <span className="text-sm font-medium">{uploadProgress}</span>
-                </div>
-              )}
             </div>
 
             {imagePreviews.length > 0 && (
@@ -697,14 +1037,10 @@ export default function CreateListingPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={isLoading || uploadingImages}
+            disabled={isLoading}
             className="w-full bg-gradient-to-r from-emerald-600 to-blue-600 text-white text-lg font-semibold py-4 px-6 rounded-xl hover:from-emerald-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
           >
-            {isLoading
-              ? uploadingImages
-                ? "Uploading images..."
-                : "Creating property..."
-              : "Create Listing"}
+            {isLoading ? "Creating property..." : "Create Listing"}
           </button>
         </form>
       </div>
