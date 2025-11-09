@@ -141,7 +141,6 @@ export async function DELETE(
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -154,7 +153,7 @@ export async function PATCH(
   let shouldReplaceImages = false;
 
   try {
-    const { id } = await params;
+    const id = request.nextUrl.pathname.split('/').pop();
 
     // Check if user owns this property
     const existingProperty = await prisma.property.findUnique({
