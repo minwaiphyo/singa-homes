@@ -73,6 +73,7 @@ export default function HomePage() {
   const blogPosts = [
     {
       id: 1,
+      name: "beautiful-home-listing",
       title: "How to Create a Beautiful Home Listing",
       excerpt:
         "Learn the secrets to making your property stand out with stunning photos and compelling descriptions.",
@@ -82,6 +83,7 @@ export default function HomePage() {
     },
     {
       id: 2,
+      name: "first-time-buyer-guide",
       title: "First-Time Home Buyer's Guide",
       excerpt:
         "Everything you need to know about purchasing your first property in Singapore.",
@@ -92,6 +94,7 @@ export default function HomePage() {
     },
     {
       id: 3,
+      name: "top-neighbourhoods-singapore",
       title: "Top 10 Neighborhoods in Singapore",
       excerpt:
         "Discover the best areas to live in Singapore based on your lifestyle and budget.",
@@ -356,7 +359,7 @@ export default function HomePage() {
           {blogPosts.map((post) => (
             <div
               key={post.id}
-              onClick={() => router.push(`/blog/${post.id}`)}
+              onClick={() => router.push(`/blog/${post.name}`)}
               className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all cursor-pointer group border border-gray-100"
             >
               <div className="relative h-48 bg-gray-200">
