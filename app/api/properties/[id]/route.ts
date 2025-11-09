@@ -52,18 +52,16 @@ export async function GET(
 
 // DELETE property
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  request: NextRequest
 ) {
-  const session = await getServerSession(authOptions);
 
+  const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { id } = params;
-
+    const id = request.nextUrl.pathname.split('/').pop();
     // Check if user owns this property and get image URLs
     const property = await prisma.property.findUnique({
       where: { id },
