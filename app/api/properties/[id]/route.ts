@@ -9,10 +9,9 @@ import { PropertyType, ListingType } from '@/generated/prisma';
 // GET - Fetch property's details by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } =  params;
+    const id = request.nextUrl.pathname.split('/').pop();
 
     const property = await prisma.property.findUnique({
       where: { id },
