@@ -1,14 +1,14 @@
 APIs
 
 properties/route.ts
-- GET (get all properties, possibly with filters, possibly with ?myProperties=true) 
-- POST (create a property) 									==> 	adds image to supabase
-- DELETE (delete a  property)								==>  	remove image from supabase
+- GET (get all properties, possibly with filters, possibly with ?myProperties=true)                 (DONE)
+- POST (create a property) 									==> 	adds image to supabase          (DONE)
 
 
 properties/[id]/route.ts
 - GET (get a specific property)				
-- PATCH (edit property details)									==> 	remove/add image to supabase
+- PATCH (edit property details)								==> 	remove/add image to supabase
+- DELETE (delete a  property)								==>  	remove image from supabase      (DONE)   
 
 
 

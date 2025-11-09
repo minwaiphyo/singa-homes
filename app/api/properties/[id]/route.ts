@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 
 
 // GET - Fetch property's details by ID
@@ -44,6 +45,96 @@ export async function GET(
     console.error('Error fetching property:', error);
     return NextResponse.json(
       { error: 'Failed to fetch property details' },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE property
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id } = params;
+
+    // Check if user owns this property and get image URLs
+    const property = await prisma.property.findUnique({
+      where: { id },
+      select: { 
+        sellerId: true,
+        images: {
+          select: {
+            url: true,
+          },
+        },
+      },
+    });
+
+    if (!property) {
+      return NextResponse.json(
+        { error: 'Property not found' },
+        { status: 404 }
+      );
+    }
+
+    if (property.sellerId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only delete your own properties' },
+        { status: 403 }
+      );
+    }
+
+    // Extract file paths from Supabase URLs
+    const imageFilePaths: string[] = [];
+    for (const image of property.images) {
+      // Extract the file path from the public URL
+      // URL format: https://[project-ref].supabase.co/storage/v1/object/public/PropertyImages/propertyimages/[property-id]/[filename]
+      const urlParts = image.url.split('/PropertyImages/');
+      if (urlParts.length === 2) {
+        imageFilePaths.push(urlParts[1]);
+      }
+    }
+
+    // Delete property from database (images will be cascade deleted due to Prisma schema)
+    await prisma.property.delete({
+      where: { id },
+    });
+
+    // Only delete from Supabase if property deletion was successful
+    if (imageFilePaths.length > 0) {
+      try {
+        const { data, error } = await supabase.storage
+          .from('PropertyImages')
+          .remove(imageFilePaths);
+
+        if (error) {
+          // Log error but don't fail the request since property is already deleted
+          console.error('Failed to delete images from Supabase:', error);
+          console.error('Orphaned image paths:', imageFilePaths);
+        } else {
+          console.log(`Successfully deleted ${imageFilePaths.length} images from Supabase`);
+        }
+      } catch (storageError) {
+        console.error('Error during Supabase cleanup:', storageError);
+        console.error('Orphaned image paths:', imageFilePaths);
+      }
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: 'Property deleted successfully' 
+    });
+  } catch (error) {
+    console.error('Error deleting property:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete property' },
       { status: 500 }
     );
   }

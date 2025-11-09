@@ -83,6 +83,38 @@ export default function PropertyDetailPage() {
     }
   };
 
+  const handleDeleteProperty = async (propertyId: string) => {
+    if (
+      !confirm(
+        "Are you sure you want to delete this property? This action cannot be undone."
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/properties/${propertyId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to delete property");
+      }
+
+      alert("Property deleted successfully");
+      // Optionally redirect or refresh the page
+      router.push("/my-properties");
+      // Or refresh the current page: router.refresh();
+    } catch (error) {
+      console.error("Error deleting property:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to delete property"
+      );
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -478,7 +510,10 @@ export default function PropertyDetailPage() {
                 <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
                   Edit Property
                 </button>
-                <button className="border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50">
+                <button
+                  onClick={() => handleDeleteProperty(property.id)}
+                  className="border border-red-600 text-red-600 px-4 py-2 rounded hover:bg-red-50"
+                >
                   Delete Property
                 </button>
               </div>
