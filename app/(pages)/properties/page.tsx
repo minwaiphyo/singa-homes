@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 
@@ -20,7 +20,7 @@ interface PropertyBrief {
   images: { url: string; altText: string | null }[];
 }
 
-export default function PropertiesPage() {
+ function PropertiesForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [properties, setProperties] = useState<PropertyBrief[]>([]);
@@ -391,4 +391,17 @@ export default function PropertiesPage() {
       )}
     </div>
   );
+}
+
+
+export default function PropertiesPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      </div>
+    }>
+      <PropertiesForm></PropertiesForm>
+    </Suspense>
+  )
 }
