@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Eye, EyeOff, Home, Mail, Lock, AlertCircle } from "lucide-react";
 import { Suspense } from "react";
 
-export default function SignInPage() {
+function SignInForm() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -297,4 +297,17 @@ export default function SignInPage() {
       </div>
     </Suspense>
   );
+}
+
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+      </div>
+    }>
+      <SignInForm></SignInForm>
+    </Suspense>
+  )
 }
