@@ -194,37 +194,38 @@ export default function MyPropertiesPage() {
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow gap-4 md:gap-0"
               >
                 {/* Property Image */}
-                <div className="relative h-48 bg-gray-200">
-                  {property.images[0] ? (
-                    <img
-                      src={property.images[0].url}
-                      alt={property.images[0].altText || property.title}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Home className="w-16 h-16 text-gray-400" />
-                    </div>
-                  )}
+                {/* Property Image */}
+<div className="relative h-48 bg-gray-200 overflow-hidden">
+  {property.images[0] ? (
+    <img
+      src={property.images[0].url}
+      alt={property.images[0].altText || property.title}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full flex items-center justify-center">
+      <Home className="w-16 h-16 text-gray-400" />
+    </div>
+  )}
 
-                  {/* Status Badges */}
-                  <div className="absolute top-2 right-2 flex gap-2">
-                    {property.isFeatured && (
-                      <span className="bg-yellow-500 text-white px-2 py-1 text-xs font-semibold rounded shadow">
-                        ⭐ Featured
-                      </span>
-                    )}
-                    <span
-                      className={`px-2 py-1 text-xs font-semibold rounded shadow ${
-                        property.isActive
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-500 text-white"
-                      }`}
-                    >
-                      {property.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </div>
-                </div>
+  {/* Status Badges */}
+  <div className="absolute top-2 right-2 flex gap-2">
+    {property.isFeatured && (
+      <span className="bg-yellow-500 text-white px-2 py-1 text-xs font-semibold rounded shadow">
+        ⭐ Featured
+      </span>
+    )}
+    <span
+      className={`px-2 py-1 text-xs font-semibold rounded shadow ${
+        property.isActive
+          ? "bg-green-500 text-white"
+          : "bg-gray-500 text-white"
+      }`}
+    >
+      {property.isActive ? "Active" : "Inactive"}
+    </span>
+  </div>
+</div>
 
                 {/* Property Details */}
                 <div className="p-4">
