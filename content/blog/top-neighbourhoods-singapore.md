@@ -1,10 +1,12 @@
 ---
-title: "Top 10 Neighbourhoods in Singapore: Where to Live in 2024"
-description: "Discover the best neighbourhoods in Singapore for families, professionals, and retirees. Complete guide with pros, cons, and what makes each area special"
-author: "PioProperties Team"
-date: "2024-03-22"
-category: "general"
-image: "/images/blogs/neighbourhoods.jpg"
+title: "Complete Home Staging Guide for Maximum Appeal"
+slug: "home-staging-guide"
+excerpt: "Transform your property to attract more buyers and get better offers"
+coverImage: "https://images.unsplash.com/photo-1565402170291-8491f14678db?w=800&q=80"
+date: "2025-01-25"
+author: "Pio Realestate Team"
+category: "Selling Tips"
+readTime: "6 min read"
 featured: true
 ---
 

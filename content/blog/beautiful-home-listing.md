@@ -1,11 +1,12 @@
 ---
 title: "How to Create a Beautiful Home Listing That Sells Fast"
-description: "Expert tips on creating stunning property listings that attract serious buyers and sell faster"
-author: "PioProperties Team"
-date: "2024-03-20"
-category: "selling"
-image: "/images/blogs/home-listing.jpg"
-featured: true
+slug: "create-beautiful-home-listing"
+excerpt: "Learn the key strategies to create an eye-catching home listing"
+coverImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
+date: "2025-01-15"
+author: "Pio Realestate Team"
+category: "Listing Tips"
+readTime: "5 min read"
 ---
 
 # How to Create a Beautiful Home Listing That Sells Fast

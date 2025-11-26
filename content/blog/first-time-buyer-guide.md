@@ -1,11 +1,12 @@
 ---
-title: "First-Time Home Buyer's Guide: Everything You Need to Know in Singapore"
-description: "Complete step-by-step guide for first-time home buyers in Singapore, from budgeting to getting keys"
-author: "PioProperties Team"
-date: "2024-03-18"
-category: "buying"
-image: "/images/blogs/first-time-buyer.jpg"
-featured: true
+title: "Master the Art of Negotiating Without Agents"
+slug: "negotiating-without-agents"
+excerpt: "Direct negotiation strategies that save you money and give you control"
+coverImage: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80"
+date: "2025-01-20"
+author: "Pio Realestate Team"
+category: "Buying Tips"
+readTime: "7 min read"
 ---
 
 # First-Time Home Buyer's Guide: Everything You Need to Know in Singapore

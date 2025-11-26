@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const phone = formData.get("phone") as string | null;
     const avatar = formData.get("avatar") as File | null;
     
-    // No need bio during initial sign up
+    // No need bio during initial sign up 
     //const bio = formData.get("bio") as string | null;
 
 
