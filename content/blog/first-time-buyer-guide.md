@@ -1,12 +1,12 @@
 ---
-title: "Master the Art of Negotiating Without Agents"
-slug: "negotiating-without-agents"
-excerpt: "Direct negotiation strategies that save you money and give you control"
+title: "First-Time Home Buyer's Guide"
+slug: "first-time-buyer-guide"
+excerpt: "Everything you need to know about purchasing your first property in Singapore."
 coverImage: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80"
 date: "2025-01-20"
-author: "Pio Realestate Team"
-category: "Buying Tips"
-readTime: "7 min read"
+author: "Pio Real Estate Team"
+category: "Buyer Guide"
+readTime: "8 min read"
 ---
 
 # First-Time Home Buyer's Guide: Everything You Need to Know in Singapore

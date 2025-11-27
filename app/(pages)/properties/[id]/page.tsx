@@ -349,7 +349,7 @@ export default function PropertyDetailPage() {
           </div>
 
           {/* Add to Favorites Button */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 mb-30">
             <FavoriteButton propertyId={property.id} />
             <EditPropertyButton propertyId={property.id} />
           </div>

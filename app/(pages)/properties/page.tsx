@@ -3,6 +3,15 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import {
+  Search,
+  MapPin,
+  Bed,
+  Bath,
+  Maximize2,
+  Star,
+  X,
+} from "lucide-react";
 
 interface PropertyBrief {
   id: string;
@@ -20,7 +29,7 @@ interface PropertyBrief {
   images: { url: string; altText: string | null }[];
 }
 
- function PropertiesForm() {
+function PropertiesForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [properties, setProperties] = useState<PropertyBrief[]>([]);
@@ -30,7 +39,6 @@ interface PropertyBrief {
   // Filter state
   const [filters, setFilters] = useState({
     propertyType: searchParams.get("propertyType") || "",
-    
     listingType: searchParams.get("listingType") || "",
     city: searchParams.get("city") || "",
     minPrice: searchParams.get("minPrice") || "",
@@ -49,7 +57,6 @@ interface PropertyBrief {
         if (value) params.append(key, value);
       });
 
-      // No method specified - defaults to GET request
       const response = await fetch(`/api/properties?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
@@ -91,9 +98,9 @@ interface PropertyBrief {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading properties...</p>
         </div>
       </div>
@@ -102,307 +109,290 @@ interface PropertyBrief {
 
   if (error) {
     return (
-      <div className="max-w-d mx-auto p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
-          {error}
+      <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            {error}
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Browse Properties</h1>
-        <p className="text-gray-600">
-          Find your dream home from {properties.length} available properties
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
+      {/* Hero Section */}
+      <div className="relative bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white overflow-hidden pt-20 pb-24">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
 
-      {/* Filters */}
-      <div className="bg-white border rounded-lg p-6 mb-8 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">Filter Properties</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {/* Property Type */}
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Property Type
-            </label>
-            <select
-              name="propertyType"
-              value={filters.propertyType}
-              onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            >
-              <option value="">All Types</option>
-              <option value="HDB">HDB</option>
-              <option value="CONDO">Condo</option>
-              <option value="LANDED">Landed</option>
-            </select>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              Browse Properties
+            </h1>
+            <p className="text-xl md:text-2xl text-white text-opacity-90">
+              Find your dream home from{" "}
+              <span className="font-semibold text-yellow-300">
+                {properties.length}
+              </span>{" "}
+              available properties
+            </p>
           </div>
-
-          {/* Listing Type */}
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Listing Type
-            </label>
-            <select
-              name="listingType"
-              value={filters.listingType}
-              onChange={handleFilterChange}
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            >
-              <option value="">All</option>
-              <option value="SALE">For Sale</option>
-              <option value="RENT">For Rent</option>
-            </select>
-          </div>
-
-          {/* City */}
-          <div>
-            <label className="block text-sm font-medium mb-2">City</label>
-            <input
-              type="text"
-              name="city"
-              value={filters.city}
-              onChange={handleFilterChange}
-              placeholder="Enter city"
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Min Price */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Min Price</label>
-            <input
-              type="number"
-              name="minPrice"
-              value={filters.minPrice}
-              onChange={handleFilterChange}
-              placeholder="0"
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Max Price */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Max Price</label>
-            <input
-              type="number"
-              name="maxPrice"
-              value={filters.maxPrice}
-              onChange={handleFilterChange}
-              placeholder="Any"
-              className="w-full border border-gray-300 rounded px-3 py-2"
-            />
-          </div>
-        </div>
-
-        {/* Filter Buttons */}
-        <div className="flex gap-3 mt-4">
-          <button
-            onClick={applyFilters}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Apply Filters
-          </button>
-          <button
-            onClick={clearFilters}
-            className="border border-gray-300 px-6 py-2 rounded hover:bg-gray-50"
-          >
-            Clear Filters
-          </button>
         </div>
       </div>
 
-      {/* Properties Grid */}
-      {properties.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg mb-4">
-            No properties found matching your criteria
-          </p>
-          <button
-            onClick={clearFilters}
-            className="text-blue-600 hover:text-blue-800"
-          >
-            Clear filters to see all properties
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map((property) => (
-            <div
-              key={property.id}
-              onClick={() => router.push(`/properties/${property.id}`)}
-              className="border rounded-lg overflow-hidden shadow hover:shadow-xl transition-shadow cursor-pointer bg-white"
-            >
-              {/* Property Image */}
-              <div className="relative h-48 bg-gray-200 overflow-hidden">
-                {property.images && property.images?.[0]?.url ? (
-                  <img
-                    src={property.images[0].url}
-                    alt={property.images[0].altText || property.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <svg
-                      className="w-16 h-16"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                      />
-                    </svg>
-                  </div>
-                )}
-                {property.isFeatured && (
-                  <span className="absolute top-2 right-2 bg-yellow-500 text-white px-3 py-1 text-xs font-semibold rounded shadow">
-                    ⭐ Featured
-                  </span>
-                )}
+      {/* Filters Section */}
+      <div className="bg-gradient-to-b from-white via-emerald-50 to-white py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Filters */}
+          <div className="bg-white rounded-2xl shadow-lg p-8 mb-12 border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <Search className="w-6 h-6 text-emerald-600" />
+              <h2 className="text-2xl font-bold text-gray-900">
+                Filter Properties
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+              {/* Property Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Property Type
+                </label>
+                <select
+                  name="propertyType"
+                  value={filters.propertyType}
+                  onChange={handleFilterChange}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                >
+                  <option value="">All Types</option>
+                  <option value="HDB">HDB</option>
+                  <option value="CONDO">Condo</option>
+                  <option value="LANDED">Landed</option>
+                </select>
               </div>
 
-              {/* Property Info */}
-              <div className="p-4">
-                <h3 className="font-semibold text-lg mb-2 truncate">
-                  {property.title}
-                </h3>
+              {/* Listing Type */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Listing Type
+                </label>
+                <select
+                  name="listingType"
+                  value={filters.listingType}
+                  onChange={handleFilterChange}
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                >
+                  <option value="">All</option>
+                  <option value="SALE">For Sale</option>
+                  <option value="RENT">For Rent</option>
+                </select>
+              </div>
 
-                <p className="text-2xl font-bold text-blue-600 mb-2">
-                  ${property.price.toLocaleString()}
-                  {property.listingType === "RENT" && (
-                    <span className="text-sm text-gray-600 font-normal">
-                      /month
-                    </span>
-                  )}
-                </p>
+              {/* City */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  City
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  value={filters.city}
+                  onChange={handleFilterChange}
+                  placeholder="Enter city"
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                />
+              </div>
 
-                <p className="text-sm text-gray-600 mb-3 flex items-center">
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                  {property.city}, {property.state}
-                </p>
+              {/* Min Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Min Price
+                </label>
+                <input
+                  type="number"
+                  name="minPrice"
+                  value={filters.minPrice}
+                  onChange={handleFilterChange}
+                  placeholder="0"
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                />
+              </div>
 
-                <div className="flex gap-4 text-sm text-gray-700 mb-3">
-                  {property.bedrooms !== null && (
-                    <span className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                        />
-                      </svg>
-                      {property.bedrooms} bed
-                    </span>
-                  )}
-                  {property.bathrooms !== null && (
-                    <span className="flex items-center">
-                      <svg
-                        className="w-4 h-4 mr-1"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"
-                        />
-                      </svg>
-                      {property.bathrooms} bath
-                    </span>
-                  )}
-                  <span className="flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-1"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                      />
-                    </svg>
-                    {property.area} sqft
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="inline-block text-xs bg-gray-100 px-3 py-1 rounded-full font-medium">
-                    {property.propertyType}
-                  </span>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      property.listingType === "SALE"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-blue-100 text-blue-700"
-                    }`}
-                  >
-                    For {property.listingType === "SALE" ? "Sale" : "Rent"}
-                  </span>
-                </div>
+              {/* Max Price */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Max Price
+                </label>
+                <input
+                  type="number"
+                  name="maxPrice"
+                  value={filters.maxPrice}
+                  onChange={handleFilterChange}
+                  placeholder="Any"
+                  className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all"
+                />
               </div>
             </div>
-          ))}
-        </div>
-      )}
 
-      {/* Results Summary */}
-      {properties.length > 0 && (
-        <div className="mt-8 text-center text-gray-600">
-          Showing {properties.length} propert
-          {properties.length === 1 ? "y" : "ies"}
+            {/* Filter Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={applyFilters}
+                className="bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 text-white font-semibold px-8 py-3 rounded-lg hover:from-emerald-700 hover:via-blue-700 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+              >
+                Apply Filters
+              </button>
+              <button
+                onClick={clearFilters}
+                className="border-2 border-gray-300 text-gray-700 font-semibold px-8 py-3 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all"
+              >
+                Clear Filters
+              </button>
+            </div>
+          </div>
+
+          {/* Properties Grid */}
+          {properties.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="bg-white rounded-2xl shadow-lg p-12 border border-gray-100 max-w-md mx-auto">
+                <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <p className="text-gray-600 text-lg mb-6 font-medium">
+                  No properties found matching your criteria
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="text-emerald-600 hover:text-emerald-700 font-semibold transition-colors"
+                >
+                  Clear filters to see all properties
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {properties.map((property) => (
+                <div
+                  key={property.id}
+                  onClick={() => router.push(`/properties/${property.id}`)}
+                  className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-100 cursor-pointer group"
+                >
+                  {/* Property Image */}
+                  <div className="relative h-56 bg-gray-200 overflow-hidden">
+                    {property.images && property.images?.[0]?.url ? (
+                      <img
+                        src={property.images[0].url}
+                        alt={property.images[0].altText || property.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                        <MapPin className="w-16 h-16 text-gray-400" />
+                      </div>
+                    )}
+                    {property.isFeatured && (
+                      <span className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-4 py-2 text-sm font-bold rounded-full shadow-lg flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-current" />
+                        Featured
+                      </span>
+                    )}
+                    <span className="absolute top-4 left-4 bg-white text-gray-900 px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                      {property.propertyType}
+                    </span>
+                  </div>
+
+                  {/* Property Info */}
+                  <div className="p-6">
+                    <h3 className="font-bold text-xl text-gray-900 mb-3 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                      {property.title}
+                    </h3>
+
+                    <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3">
+                      ${property.price.toLocaleString()}
+                      {property.listingType === "RENT" && (
+                        <span className="text-sm text-gray-600 font-normal">
+                          /month
+                        </span>
+                      )}
+                    </p>
+
+                    <div className="flex items-center gap-1 text-gray-700 mb-4 font-medium">
+                      <MapPin className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      <span className="text-sm">
+                        {property.city}, {property.state}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 pt-4 pb-4 border-t border-b border-gray-200 mb-4">
+                      {property.bedrooms !== null && (
+                        <div className="flex flex-col items-center">
+                          <Bed className="w-5 h-5 text-emerald-600 mb-1" />
+                          <span className="text-sm font-semibold text-gray-900">
+                            {property.bedrooms}
+                          </span>
+                          <span className="text-xs text-gray-500">Beds</span>
+                        </div>
+                      )}
+                      {property.bathrooms !== null && (
+                        <div className="flex flex-col items-center">
+                          <Bath className="w-5 h-5 text-emerald-600 mb-1" />
+                          <span className="text-sm font-semibold text-gray-900">
+                            {property.bathrooms}
+                          </span>
+                          <span className="text-xs text-gray-500">Baths</span>
+                        </div>
+                      )}
+                      <div className="flex flex-col items-center">
+                        <Maximize2 className="w-5 h-5 text-emerald-600 mb-1" />
+                        <span className="text-sm font-semibold text-gray-900">
+                          {property.area}
+                        </span>
+                        <span className="text-xs text-gray-500">sqft</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className="inline-block bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold">
+                        {property.listingType === "SALE"
+                          ? "For Sale"
+                          : "For Rent"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Results Summary */}
+          {properties.length > 0 && (
+            <div className="text-center">
+              <p className="text-gray-600 font-medium">
+                Showing{" "}
+                <span className="text-emerald-600 font-bold">
+                  {properties.length}
+                </span>{" "}
+                propert{properties.length === 1 ? "y" : "ies"}
+              </p>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-
 export default function PropertiesPage() {
   return (
-    <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-      </div>
-    }>
-      <PropertiesForm></PropertiesForm>
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        </div>
+      }
+    >
+      <PropertiesForm />
     </Suspense>
-  )
+  );
 }

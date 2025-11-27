@@ -26,13 +26,13 @@ export function getAllPostSlugs(): string[] {
 }
 
 // Get a single post by slug
-export function getPostBySlug(slug: string): BlogPost {
+export async function getPostBySlug(slug: string): Promise<BlogPost> {
   const fullPath = path.join(postsDirectory, `${slug}.md`);
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   
   const { data, content } = matter(fileContents);
   
-  const htmlContent = marked(content);
+  const htmlContent = await marked(content); // Add await here
   
   return {
     slug,
@@ -48,17 +48,17 @@ export function getPostBySlug(slug: string): BlogPost {
 }
 
 // Get all posts sorted by date
-export function getAllPosts(): BlogPost[] {
+export async function getAllPosts(): Promise<BlogPost[]> {
   const slugs = getAllPostSlugs();
-  const posts = slugs
-    .map(slug => getPostBySlug(slug))
-    .sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
+  const posts = await Promise.all(
+    slugs.map(slug => getPostBySlug(slug))
+  );
   
-  return posts;
+  return posts.sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()));
 }
 
 // Get posts by category
-export function getPostsByCategory(category: string): BlogPost[] {
-  const allPosts = getAllPosts();
+export async function getPostsByCategory(category: string): Promise<BlogPost[]> {
+  const allPosts = await getAllPosts();
   return allPosts.filter(post => post.category === category);
 }

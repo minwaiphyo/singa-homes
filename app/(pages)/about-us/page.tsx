@@ -1,7 +1,11 @@
-// app/about/page.tsx
-import AboutUsCard from "@/components/AboutUsCard";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { ArrowRight, CheckCircle } from "lucide-react";
 
 export default function AboutPage() {
+  const router = useRouter();
+
   const aboutSections = [
     {
       title: "Company Mission",
@@ -36,56 +40,80 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+      <div className="relative bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white overflow-hidden pt-20 pb-24">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
+          <div className="text-center max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
               About PioProperties
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-              Real estate transactions made transparent, seamless and affordable
+            <p className="text-xl md:text-2xl text-white text-opacity-90">
+              Real estate transactions made transparent, seamless, and affordable
             </p>
           </div>
         </div>
       </div>
 
       {/* About Cards Section */}
-      <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="space-y-4">
+      <div className="max-w-4xl mx-auto py-16 px-4">
+        <div className="space-y-6">
           {aboutSections.map((section, index) => (
-            <AboutUsCard
+            <div
               key={index}
-              title={section.title}
-              description={section.description}
-              className="transition-all duration-300"
-            />
+              className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100 hover:shadow-xl transition-all duration-300"
+            >
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-blue-600 flex items-center justify-center flex-shrink-0 mt-1">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                    {section.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    {section.description}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Call to Action */}
-      <div className="bg-white">
-        <div className="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+      {/* Call to Action Section - Seamlessly integrated with Footer gradient */}
+      <div className="relative bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white overflow-hidden py-20">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
+
+        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-white text-opacity-90 mb-10 max-w-2xl mx-auto">
             Join thousands of users who have already discovered the benefits of
             direct real estate transactions
           </p>
-          <div className="space-x-4">
-            <a href="../create-listing">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-                List Your Property
-              </button>
-            </a>
-            <a href="../properties">
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-8 rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-                Browse Properties
-              </button>
-            </a>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => router.push("/create-listing")}
+              className="inline-flex items-center justify-center gap-2 bg-white text-emerald-600 font-semibold py-4 px-10 rounded-xl hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              List Your Property
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => router.push("/properties")}
+              className="inline-flex items-center justify-center gap-2 border-2 border-white text-white font-semibold py-4 px-10 rounded-xl hover:bg-white hover:bg-opacity-10 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              Browse Properties
+              <ArrowRight className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </div>

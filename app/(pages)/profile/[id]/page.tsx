@@ -17,6 +17,7 @@ import {
   Home,
   CheckCircle,
   XCircle,
+  ArrowRight,
 } from "lucide-react";
 
 interface UserProfile {
@@ -80,7 +81,7 @@ export default function ProfilePage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -91,31 +92,39 @@ export default function ProfilePage() {
 
   if (error || !profile) {
     return (
-      <div className="max-w-4xl mx-auto p-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-700">{error || "Profile not found"}</p>
+      <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-center">
+            <p className="text-red-700 font-medium">{error || "Profile not found"}</p>
+          </div>
         </div>
       </div>
     );
   }
 
-  //https://feowsnofuagwjwusfbyq.supabase.co/storage/v1/object/public/Avatar/avatars/40e4aae8-22d0-4a0a-96fe-0c5e0566c465.jpg
-
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-          {/* Cover Background */}
-          <div className="h-32 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+    <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white py-8">
+      {/* Hero Section with Profile Header */}
+      <div className="relative bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white overflow-hidden">
+        {/* Decorative Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
 
-          {/* Profile Info */}
-          <div className="relative px-6 pb-6">
-            {/* Avatar */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
+  <h1 className="text-4xl md:text-5xl font-bold mb-2">My Profile</h1>
+</div>
+      </div>
 
-            <div className="flex items-end justify-between -mt-16 mb-4">
-              <div className="relative">
-                <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-200 overflow-hidden shadow-lg">
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        {/* Profile Card */}
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+          <div className="p-8">
+            {/* Profile Header with Avatar and Edit Button */}
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+              <div className="flex items-start gap-6 mb-6 md:mb-0">
+                {/* Avatar */}
+                <div className="relative w-32 h-32 rounded-2xl border-4 border-emerald-100 bg-gray-200 overflow-hidden shadow-lg flex-shrink-0">
                   {profile.avatar ? (
                     <Image
                       src={profile.avatar}
@@ -124,9 +133,30 @@ export default function ProfilePage() {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-emerald-100">
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-100 to-blue-100">
                       <User className="w-16 h-16 text-emerald-600" />
                     </div>
+                  )}
+                </div>
+
+                {/* Name and Email */}
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 mb-3">
+                    {profile.firstName} {profile.lastName}
+                  </h2>
+                  <div className="flex items-center gap-2 text-gray-600 mb-3">
+                    <Mail className="w-4 h-4 text-emerald-600" />
+                    <span>{profile.email}</span>
+                    {profile.isEmailVerified ? (
+                      <CheckCircle className="w-5 h-5 text-green-500" />
+                    ) : (
+                      <XCircle className="w-5 h-5 text-gray-400" />
+                    )}
+                  </div>
+                  {profile.bio && (
+                    <p className="text-gray-700 leading-relaxed max-w-md">
+                      {profile.bio}
+                    </p>
                   )}
                 </div>
               </div>
@@ -134,76 +164,53 @@ export default function ProfilePage() {
               {/* Edit Button */}
               <button
                 onClick={() => router.push(`/profile/${params.id}/edit`)}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
               >
-                <Edit className="w-4 h-4" />
-                {"Edit Profile"}
+                <Edit className="w-5 h-5" />
+                Edit Profile
               </button>
             </div>
 
-            {/* Name and Email */}
-            <div className="mb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-1">
-                {profile.firstName} {profile.lastName}
-              </h1>
-              <div className="flex items-center gap-2 text-gray-600 mb-2">
-                <Mail className="w-4 h-4" />
-                <span>{profile.email}</span>
-                {profile.isEmailVerified ? (
-                  <CheckCircle className="w-5 h-5 text-green-500" />
-                ) : (
-                  <XCircle className="w-5 h-5 text-gray-400" />
-                )}
-              </div>
-            </div>
-
-            {/* Bio */}
-            {profile.bio && (
-              <div className="mb-4">
-                <p className="text-gray-700 leading-relaxed">{profile.bio}</p>
-              </div>
-            )}
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-gray-200">
               <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <Home className="w-5 h-5 text-emerald-600 mr-1" />
-                  <span className="text-2xl font-bold text-gray-900">
-                    {profile._count?.properties || 0}
-                  </span>
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl mb-3">
+                  <Home className="w-6 h-6 text-emerald-600" />
                 </div>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {profile._count?.properties || 0}
+                </p>
                 <p className="text-sm text-gray-600">Properties</p>
               </div>
 
               <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <Heart className="w-5 h-5 text-red-500 mr-1" />
-                  <span className="text-2xl font-bold text-gray-900">
-                    {profile._count?.favorites || 0}
-                  </span>
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-red-100 to-red-200 rounded-xl mb-3">
+                  <Heart className="w-6 h-6 text-red-600" />
                 </div>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {profile._count?.favorites || 0}
+                </p>
                 <p className="text-sm text-gray-600">Favorites</p>
               </div>
 
               <div className="text-center">
-                <div className="flex items-center justify-center mb-1">
-                  <Calendar className="w-5 h-5 text-blue-600 mr-1" />
-                  <span className="text-sm font-semibold text-gray-900">
-                    {formatDate(profile.createdAt).split(" ")[0]}
-                  </span>
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl mb-3">
+                  <Calendar className="w-6 h-6 text-blue-600" />
                 </div>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {formatDate(profile.createdAt).split(",")[0]}
+                </p>
                 <p className="text-sm text-gray-600">Joined</p>
               </div>
 
               {profile.age && (
                 <div className="text-center">
-                  <div className="flex items-center justify-center mb-1">
-                    <User className="w-5 h-5 text-purple-600 mr-1" />
-                    <span className="text-2xl font-bold text-gray-900">
-                      {profile.age}
-                    </span>
+                  <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl mb-3">
+                    <User className="w-6 h-6 text-purple-600" />
                   </div>
+                  <p className="text-2xl font-bold text-gray-900 mb-1">
+                    {profile.age}
+                  </p>
                   <p className="text-sm text-gray-600">Years old</p>
                 </div>
               )}
@@ -212,35 +219,41 @@ export default function ProfilePage() {
         </div>
 
         {/* Contact Information */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Contact Information
           </h2>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-              <Mail className="w-5 h-5 text-gray-500" />
+            <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-xl border border-emerald-100">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Mail className="w-6 h-6 text-emerald-600" />
+              </div>
               <div>
-                <p className="text-sm text-gray-600">Email</p>
+                <p className="text-sm font-semibold text-gray-600">Email</p>
                 <p className="font-medium text-gray-900">{profile.email}</p>
               </div>
             </div>
 
             {profile.phone && (
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <Phone className="w-5 h-5 text-gray-500" />
+              <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-100">
+                <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-6 h-6 text-blue-600" />
+                </div>
                 <div>
-                  <p className="text-sm text-gray-600">Phone</p>
+                  <p className="text-sm font-semibold text-gray-600">Phone</p>
                   <p className="font-medium text-gray-900">{profile.phone}</p>
                 </div>
               </div>
             )}
 
             {profile.age && (
-              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                <User className="w-5 h-5 text-gray-500" />
+              <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-purple-600" />
+                </div>
                 <div>
-                  <p className="text-sm text-gray-600">Age</p>
+                  <p className="text-sm font-semibold text-gray-600">Age</p>
                   <p className="font-medium text-gray-900">
                     {profile.age} years old
                   </p>
@@ -251,37 +264,37 @@ export default function ProfilePage() {
         </div>
 
         {/* Account Details */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Account Details
           </h2>
 
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600">Email Verification</span>
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <span className="text-gray-700 font-medium">Email Verification</span>
               {profile.isEmailVerified ? (
-                <span className="flex items-center gap-1 text-green-600 font-medium">
-                  <CheckCircle className="w-4 h-4" />
+                <span className="flex items-center gap-2 text-green-600 font-semibold bg-green-50 px-4 py-2 rounded-lg">
+                  <CheckCircle className="w-5 h-5" />
                   Verified
                 </span>
               ) : (
-                <span className="flex items-center gap-1 text-gray-500">
-                  <XCircle className="w-4 h-4" />
+                <span className="flex items-center gap-2 text-gray-500 font-semibold bg-gray-100 px-4 py-2 rounded-lg">
+                  <XCircle className="w-5 h-5" />
                   Not Verified
                 </span>
               )}
             </div>
 
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600">Member Since</span>
-              <span className="font-medium text-gray-900">
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <span className="text-gray-700 font-medium">Member Since</span>
+              <span className="font-semibold text-gray-900">
                 {formatDate(profile.createdAt)}
               </span>
             </div>
 
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-600">Last Updated</span>
-              <span className="font-medium text-gray-900">
+            <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <span className="text-gray-700 font-medium">Last Updated</span>
+              <span className="font-semibold text-gray-900">
                 {formatDate(profile.updatedAt)}
               </span>
             </div>
@@ -289,21 +302,23 @@ export default function ProfilePage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <button
             onClick={() => router.push("/my-properties")}
-            className="flex items-center justify-center gap-2 p-4 bg-white border-2 border-emerald-600 text-emerald-600 rounded-lg hover:bg-emerald-50 transition-colors"
+            className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-emerald-600 text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition-all shadow-lg hover:shadow-xl group"
           >
-            <Home className="w-5 h-5" />
-            <span className="font-medium">View My Properties</span>
+            <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            <span>View My Properties</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
 
           <button
             onClick={() => router.push("/favorites")}
-            className="flex items-center justify-center gap-2 p-4 bg-white border-2 border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+            className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-red-600 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all shadow-lg hover:shadow-xl group"
           >
-            <Heart className="w-5 h-5" />
-            <span className="font-medium">View Favorites</span>
+            <Heart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            <span>View Favorites</span>
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>

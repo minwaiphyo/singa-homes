@@ -127,7 +127,7 @@ export default function MyPropertiesPage() {
 
   if (status === "loading" || isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading your properties...</p>
@@ -137,12 +137,12 @@ export default function MyPropertiesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white py-8">
       <div className="max-w-7xl mx-auto px-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
               My Properties
             </h1>
             <p className="text-gray-600">
@@ -151,7 +151,7 @@ export default function MyPropertiesPage() {
           </div>
           <button
             onClick={() => router.push("/create-listing")}
-            className="flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors shadow-md"
+            className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-emerald-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl font-semibold"
           >
             <Plus className="w-5 h-5" />
             Create New Listing
@@ -167,17 +167,17 @@ export default function MyPropertiesPage() {
 
         {/* Empty State */}
         {properties.length === 0 && !error && (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white rounded-2xl shadow-lg p-12 text-center border border-gray-100">
             <Home className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">
               No Properties Yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-8">
               Start by creating your first property listing
             </p>
             <button
               onClick={() => router.push("/create-listing")}
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 transition-colors"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-emerald-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl font-semibold"
             >
               <Plus className="w-5 h-5" />
               Create Your First Listing
@@ -191,49 +191,48 @@ export default function MyPropertiesPage() {
             {properties.map((property) => (
               <div
                 key={property.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow gap-4 md:gap-0"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
               >
                 {/* Property Image */}
-                {/* Property Image */}
-<div className="relative h-48 bg-gray-200 overflow-hidden">
-  {property.images[0] ? (
-    <img
-      src={property.images[0].url}
-      alt={property.images[0].altText || property.title}
-      className="w-full h-full object-cover"
-    />
-  ) : (
-    <div className="w-full h-full flex items-center justify-center">
-      <Home className="w-16 h-16 text-gray-400" />
-    </div>
-  )}
+                <div className="relative h-48 bg-gray-200 overflow-hidden">
+                  {property.images[0] ? (
+                    <img
+                      src={property.images[0].url}
+                      alt={property.images[0].altText || property.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
+                      <Home className="w-16 h-16 text-gray-400" />
+                    </div>
+                  )}
 
-  {/* Status Badges */}
-  <div className="absolute top-2 right-2 flex gap-2">
-    {property.isFeatured && (
-      <span className="bg-yellow-500 text-white px-2 py-1 text-xs font-semibold rounded shadow">
-        ⭐ Featured
-      </span>
-    )}
-    <span
-      className={`px-2 py-1 text-xs font-semibold rounded shadow ${
-        property.isActive
-          ? "bg-green-500 text-white"
-          : "bg-gray-500 text-white"
-      }`}
-    >
-      {property.isActive ? "Active" : "Inactive"}
-    </span>
-  </div>
-</div>
+                  {/* Status Badges */}
+                  <div className="absolute top-3 right-3 flex gap-2">
+                    {property.isFeatured && (
+                      <span className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white px-3 py-1 text-xs font-bold rounded-full shadow-lg">
+                        ⭐ Featured
+                      </span>
+                    )}
+                    <span
+                      className={`px-3 py-1 text-xs font-bold rounded-full shadow-lg ${
+                        property.isActive
+                          ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white"
+                          : "bg-gray-500 text-white"
+                      }`}
+                    >
+                      {property.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                </div>
 
                 {/* Property Details */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg mb-2 truncate">
+                <div className="p-6">
+                  <h3 className="font-bold text-lg mb-2 truncate text-gray-900">
                     {property.title}
                   </h3>
 
-                  <p className="text-2xl font-bold text-emerald-600 mb-3">
+                  <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent mb-3">
                     ${property.price.toLocaleString()}
                     {property.listingType === "RENT" && (
                       <span className="text-sm text-gray-600 font-normal">
@@ -243,37 +242,37 @@ export default function MyPropertiesPage() {
                   </p>
 
                   <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <MapPin className="w-4 h-4 mr-1" />
+                    <MapPin className="w-4 h-4 mr-1 text-emerald-600" />
                     <span className="truncate">
                       {property.city}, {property.state}
                     </span>
                   </div>
 
-                  <div className="flex gap-4 text-sm text-gray-700 mb-3">
+                  <div className="flex gap-4 text-sm text-gray-700 mb-4 pb-4 border-b border-gray-200">
                     {property.bedrooms !== null && (
-                      <span>{property.bedrooms} bed</span>
+                      <span className="font-semibold">{property.bedrooms} bed</span>
                     )}
                     {property.bathrooms !== null && (
-                      <span>{property.bathrooms} bath</span>
+                      <span className="font-semibold">{property.bathrooms} bath</span>
                     )}
-                    <span>{property.area} sqft</span>
+                    <span className="font-semibold">{property.area} sqft</span>
                   </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-xs bg-gradient-to-r from-emerald-100 to-blue-100 text-emerald-700 px-3 py-1 rounded-full font-semibold">
                       {property.propertyType}
                     </span>
-                    <div className="flex items-center gap-1 text-sm text-gray-600">
-                      <Heart className="w-4 h-4 text-red-500" />
+                    <div className="flex items-center gap-1 text-sm font-semibold text-gray-700">
+                      <Heart className="w-4 h-4 text-red-500 fill-red-500" />
                       <span>{property._count?.favorites || 0}</span>
                     </div>
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="grid grid-cols-2 gap-2 p-5">
+                  <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => router.push(`/properties/${property.id}`)}
-                      className="flex items-center justify-center gap-2 px-3 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors text-sm"
+                      className="flex items-center justify-center gap-2 px-3 py-2 border-2 border-gray-300 rounded-lg hover:border-emerald-600 hover:text-emerald-600 transition-all text-sm font-semibold text-gray-700"
                     >
                       <Eye className="w-4 h-4" />
                       View
@@ -283,7 +282,7 @@ export default function MyPropertiesPage() {
                       onClick={() =>
                         router.push(`/properties/${property.id}/edit`)
                       }
-                      className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all text-sm font-semibold shadow-md hover:shadow-lg"
                     >
                       <Edit className="w-4 h-4" />
                       Edit
@@ -293,7 +292,7 @@ export default function MyPropertiesPage() {
                       onClick={() =>
                         toggleActive(property.id, property.isActive)
                       }
-                      className="flex items-center justify-center gap-2 px-3 py-2 border border-emerald-600 text-emerald-600 rounded hover:bg-emerald-50 transition-colors text-sm"
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-lg hover:from-emerald-700 hover:to-teal-700 transition-all text-sm font-semibold shadow-md hover:shadow-lg"
                     >
                       {property.isActive ? (
                         <>
@@ -311,7 +310,7 @@ export default function MyPropertiesPage() {
                     <button
                       onClick={() => handleDelete(property.id)}
                       disabled={deletingId === property.id}
-                      className="flex items-center justify-center gap-2 px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 text-sm"
+                      className="flex items-center justify-center gap-2 px-3 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm font-semibold shadow-md hover:shadow-lg"
                     >
                       {deletingId === property.id ? (
                         <>

@@ -1,10 +1,11 @@
 ---
-title: "Complete Home Staging Guide for Maximum Appeal"
-slug: "home-staging-guide"
-excerpt: "Transform your property to attract more buyers and get better offers"
+title: "Top 10 Neighborhoods in Singapore"
+slug: "Location Guide"
+excerpt: "Discover the best areas to live in Singapore based on your lifestyle and budget."
+
 coverImage: "https://images.unsplash.com/photo-1565402170291-8491f14678db?w=800&q=80"
 date: "2025-01-25"
-author: "Pio Realestate Team"
+author: "Pio Real Estate Team"
 category: "Selling Tips"
 readTime: "6 min read"
 featured: true
