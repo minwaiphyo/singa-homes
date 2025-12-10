@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { User, LogOut, Settings, Heart, Home, Plus } from "lucide-react";
+import { User, LogOut, Heart, Home, Plus } from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -149,15 +149,6 @@ export default function NavBar() {
                         >
                           <Heart className="w-4 h-4 mr-3" />
                           Favorites
-                        </Link>
-
-                        <Link
-                          href="/settings"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                          onClick={closeProfileDropdown}
-                        >
-                          <Settings className="w-4 h-4 mr-3" />
-                          Settings
                         </Link>
 
                         <div className="border-t border-gray-100 mt-2 pt-2">
@@ -310,14 +301,6 @@ export default function NavBar() {
                         Favorites
                       </Link>
 
-                      <Link
-                        href="/settings"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={closeMobileMenu}
-                      >
-                        <Settings className="w-5 h-5 mr-3" />
-                        Settings
-                      </Link>
 
                       <button
                         onClick={handleSignOut}
