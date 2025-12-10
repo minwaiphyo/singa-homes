@@ -108,7 +108,7 @@ export default function SignUpPage() {
 
       // Upload to Supabase Storage
       const { data, error } = await supabase.storage
-        .from("avatars")
+        .from("Avatar")
         .upload(fileName, avatarFile, {
           cacheControl: "3600",
           upsert: false,
