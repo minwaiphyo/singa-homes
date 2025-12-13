@@ -232,14 +232,14 @@ export async function POST(request: NextRequest) {
     for (let i = 0; i < imageFiles.length; i++) {
       const file = imageFiles[i];
       const fileExt = file.name.split('.').pop();
-      const fileName = `propertyimages/${newProperty.id}/${Date.now()}-${Math.random()
+      const fileName = `${newProperty.id}/${Date.now()}-${Math.random()
         .toString(36)
         .substring(7)}.${fileExt}`;    
       // Convert File to ArrayBuffer then to Buffer
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const { data, error } = await supabase.storage
+      const { data, error } = await supabase.storage  
         .from('PropertyImages')
         .upload(fileName, buffer, {
           contentType: file.type,
@@ -333,153 +333,3 @@ export async function POST(request: NextRequest) {
     )
   };
 }
-
-
-
-// PATCH - Update property
-
-// export async function PATCH(
-//   request: NextRequest,
-//   { params }: { params: { id: string } }
-// ) {
-//   const session = await getServerSession(authOptions);
-
-//   if (!session?.user?.id) {
-//     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-//   }
-
-//   try {
-//     const { id } = params;
-//     const body = await request.json();
-
-//     // Check if user owns this property
-//     const property = await prisma.property.findUnique({
-//       where: { id },
-//       select: { sellerId: true },
-//     });
-
-//     if (!property) {
-//       return NextResponse.json(
-//         { error: 'Property not found' },
-//         { status: 404 }
-//       );
-//     }
-
-//     if (property.sellerId !== session.user.id) {
-//       return NextResponse.json(
-//         { error: 'You can only update your own properties' },
-//         { status: 403 }
-//       );
-//     }
-
-//     // Update property
-//     const updatedProperty = await prisma.property.update({
-//       where: { id },
-//       data: {
-//         ...(body.title !== undefined && { title: body.title }),
-//         ...(body.description !== undefined && { description: body.description }),
-//         ...(body.price !== undefined && { price: Number(body.price) }),
-//         ...(body.area !== undefined && { area: Number(body.area) }),
-//         ...(body.bedrooms !== undefined && { bedrooms: body.bedrooms ? Number(body.bedrooms) : null }),
-//         ...(body.bathrooms !== undefined && { bathrooms: body.bathrooms ? Number(body.bathrooms) : null }),
-//         ...(body.propertyType !== undefined && { propertyType: body.propertyType }),
-//         ...(body.listingType !== undefined && { listingType: body.listingType }),
-//         ...(body.address !== undefined && { address: body.address }),
-//         ...(body.city !== undefined && { city: body.city }),
-//         ...(body.state !== undefined && { state: body.state }),
-//         ...(body.zipCode !== undefined && { zipCode: body.zipCode }),
-//         ...(body.country !== undefined && { country: body.country }),
-//         ...(body.leaseYearsLeft !== undefined && { leaseYearsLeft: body.leaseYearsLeft ? Number(body.leaseYearsLeft) : null }),
-//         ...(body.isActive !== undefined && { isActive: body.isActive }),
-//         ...(body.isFeatured !== undefined && { isFeatured: body.isFeatured }),
-//       },
-//       include: {
-//         images: true,
-//       },
-//     });
-
-//     return NextResponse.json(updatedProperty);
-//   } catch (error) {
-//     console.error('Error updating property:', error);
-//     return NextResponse.json(
-//       { error: 'Failed to update property' },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-
-// export async function POST(request: NextRequest) {
-//   const session = await getServerSession(authOptions);
-
-//   if (!session?.user?.id) {
-//     return NextResponse.json(
-//       { error: 'Unauthorized. Please sign in to create a listing' },
-//       { status: 401 }
-//     )
-//   };
-
-//   try {
-//     const body = await request.json();
-
-//     //Destructure data
-//       const {
-//         title,
-//         description,
-//         price,
-//         area,
-//         bedrooms,
-//         bathrooms,
-//         propertyType,
-//         listingType,
-//         address,
-//         city,
-//         state,
-//         zipCode,
-//         country,
-//         leaseYearsLeft,
-//         isActive,
-//         isFeatured,
-//       } = body;
-
-//       const newProperty = await prisma.property.create({
-//         data: {
-//           sellerId: session.user.id, 
-//           title: body.title,
-//           description: body.description ?? null,
-//           price: Number(body.price),
-//           area: Number(body.area),
-//           bedrooms: body.bedrooms ? Number(body.bedrooms) : null,
-//           bathrooms: body.bathrooms ? Number(body.bathrooms) : null,
-//           propertyType: body.propertyType,
-//           listingType: body.listingType,
-//           address: body.address,
-//           city: body.city,
-//           state: body.state,
-//           zipCode: body.zipCode,
-//           country: body.country ?? "Singapore",
-//           leaseYearsLeft: body.leaseYearsLeft ? Number(body.leaseYearsLeft) : null,
-//           isActive: body.isActive ?? true,
-//           isFeatured: body.isFeatured ?? false,
-//         },
-//       });
-//       return NextResponse.json(
-//         {
-//           success: true,
-//           property: newProperty
-//         },
-//         { status: 201 }
-//       );
-
-//     } catch (error) {
-//       console.error('Error creating property:', error);
-//       return NextResponse.json(
-//         { error: 'An error occurred while creating the property.' },
-//         { status: 500 }
-//       );
-//     }
-
-
-    
-
-// }

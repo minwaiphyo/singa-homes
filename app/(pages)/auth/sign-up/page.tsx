@@ -119,7 +119,7 @@ export default function SignUpPage() {
       // Get public URL
       const {
         data: { publicUrl },
-      } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      } = supabase.storage.from("Avatar").getPublicUrl(fileName);
 
       return publicUrl;
     } catch (error) {
