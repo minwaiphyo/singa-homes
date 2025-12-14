@@ -51,7 +51,6 @@ export default function EditPropertyPage() {
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
-
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/auth/signin");
@@ -164,13 +163,11 @@ export default function EditPropertyPage() {
     setError("");
   };
 
-
-
   // Remove existing image
   const removeExistingImage = (index: number) => {
-    const imageToRemove =   existingImages[index];
-    setImagesToDelete([...imagesToDelete  , imageToRemove.id]);
-    setExistingImages(existingImages.filter((_, i) => i !== index)); 
+    const imageToRemove = existingImages[index];
+    setImagesToDelete([...imagesToDelete, imageToRemove.id]);
+    setExistingImages(existingImages.filter((_, i) => i !== index));
   };
 
   // Remove new image
@@ -239,7 +236,7 @@ export default function EditPropertyPage() {
 
       // Add deleted images ID
       if (imagesToDelete.length > 0) {
-        submitData.append('deletedImageIds', JSON.stringify(imagesToDelete));
+        submitData.append("deletedImageIds", JSON.stringify(imagesToDelete));
       }
 
       // If replacing images, append new image files
@@ -324,98 +321,97 @@ export default function EditPropertyPage() {
 
             {/* Existing Images */}
             {existingImages.length > 0 && (
+              <div className="mb-6">
+                <p className="text-sm font-semibold text-gray-700 mb-3">
+                  Current Images ({existingImages.length})
+                </p>
 
+                <div className="space-y-2">
+                  {existingImages.map((image, index) => {
+                    // Extract filename from URL
+                    const urlParts = image.url.split("/");
+                    const fileName = urlParts[urlParts.length - 1];
 
-  <div className="mb-6">
-    <p className="text-sm font-semibold text-gray-700 mb-3">
-      Current Images ({existingImages.length})
-    </p>
-    <Image
-      src={existingImages[1].url || "Test"}
-      alt={existingImages[0].altText || "Primary Image"}
-      width={1000}
-      height={400}
-      className="w-full h-60 md:h-96 object-cover rounded-xl mb-4 shadow-md"
-      unoptimized
-    />
+                    return (
+                      <div
+                        key={image.id}
+                        className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:bg-gray-50 transition-all"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          {image.isPrimary && (
+                            <span className="bg-gradient-to-r from-emerald-500 to-blue-600 text-white text-xs px-3 py-1 rounded-full font-semibold">
+                              Primary
+                            </span>
+                          )}
+                          <span className="text-gray-700 font-medium truncate">
+                            {fileName}
+                          </span>
+                        </div>
 
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-      {existingImages.map((image, index) => (
-        <div key={image.id} className="relative group">
-          
-          <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-gray-200 shadow-md">          
-            <Image
-              src={image.url}
-              alt={image.altText || `Image ${index + 1}`}
-              width={1000}
-              height={160 }
-              className="w-full -full object-cover"
-              unoptimized
-            />
-
-            {image.isPrimary && (
-              <span className="absolute top-2 left-2 bg-gradient-to-r from-emerald-500 to-blue-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-lg z-10">
-                Primary
-              </span>
+                        <div className="flex items-center gap-2">
+                          {!image.isPrimary && (
+                            <button
+                              type="button"
+                              onClick={() => setPrimaryExistingImage(index)}
+                              className="bg-white text-gray-700 border border-gray-300 rounded-lg px-3 py-2 hover:bg-emerald-100 hover:border-emerald-300 transition-all flex items-center gap-1"
+                              title="Set as primary"
+                            >
+                              <Star className="w-4 h-4" />
+                              <span className="text-sm">Set Primary</span>
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => removeExistingImage(index)}
+                            className="bg-red-500 text-white rounded-lg px-3 py-2 hover:bg-red-600 transition-all flex items-center gap-1"
+                            title="Remove image"
+                          >
+                            <X className="w-4 h-4" />
+                            <span className="text-sm">Remove</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             )}
 
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all flex items-center justify-center gap-2 z-10">
-              {!image.isPrimary && (
-                <button
-                  type="button"
-                  onClick={() => setPrimaryExistingImage(index)}
-                  className="opacity-0 group-hover:opacity-100 bg-white text-gray-700 rounded-full p-2 hover:bg-emerald-100 transition-all shadow-lg"
-                  title="Set as primary"
-                >
-                  <Star className="w-5 h-5" />
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={() => removeExistingImage(index)}
-                className="opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all shadow-lg"
-                title="Remove image"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
+            {/* New Images */}
             {/* New Images */}
             {newImagePreviews.length > 0 && (
               <div className="mb-6">
                 <p className="text-sm font-semibold text-gray-700 mb-3">
                   New Images to Upload ({newImagePreviews.length})
                 </p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {newImagePreviews.map((preview, index) => (
-                    <div key={index} className="relative group">
-                      <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-emerald-300 shadow-md">
-                        <Image
-                          src={preview}
-                          alt={`New image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                        <span className="absolute top-2 left-2 bg-emerald-500 text-white text-xs px-2 py-1 rounded">
+
+                <div className="space-y-2">
+                  {newImageFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-4 border-2 border-emerald-300 rounded-lg bg-emerald-50 hover:bg-emerald-100 transition-all"
+                    >
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="bg-emerald-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
                           New
                         </span>
-                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all flex items-center justify-center">
-                          <button
-                            type="button"
-                            onClick={() => removeNewImage(index)}
-                            className="opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-all shadow-lg"
-                          >
-                            <X className="w-5 h-5" />
-                          </button>
-                        </div>
+                        <span className="text-gray-700 font-medium truncate">
+                          {file.name}
+                        </span>
+                        <span className="text-gray-500 text-sm">
+                          ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                        </span>
                       </div>
+
+                      <button
+                        type="button"
+                        onClick={() => removeNewImage(index)}
+                        className="bg-red-500 text-white rounded-lg px-3 py-2 hover:bg-red-600 transition-all flex items-center gap-1"
+                        title="Remove image"
+                      >
+                        <X className="w-4 h-4" />
+                        <span className="text-sm">Remove</span>
+                      </button>
                     </div>
                   ))}
                 </div>

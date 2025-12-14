@@ -41,6 +41,7 @@ function getStoragePathFromPublicUrl(url: string | null | undefined) {
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
+
   if (!session) {
     return NextResponse.json(
       { error: 'Unauthorized. Please sign in to view profile.' },

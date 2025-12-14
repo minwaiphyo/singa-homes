@@ -19,6 +19,7 @@ import {
   XCircle,
   ArrowRight,
 } from "lucide-react";
+import { handleInvalidSession } from "@/lib/auth-utils";
 
 interface UserProfile {
   id: string;
@@ -61,6 +62,8 @@ export default function ProfilePage() {
         setProfile(data.user);
       } else {
         setError("Failed to load profile");
+        handleInvalidSession(router);
+        return;
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
@@ -95,7 +98,9 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-6 text-center">
-            <p className="text-red-700 font-medium">{error || "Profile not found"}</p>
+            <p className="text-red-700 font-medium">
+              {error || "Profile not found"}
+            </p>
           </div>
         </div>
       </div>
@@ -111,8 +116,8 @@ export default function ProfilePage() {
         <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-16 text-center">
-  <h1 className="text-4xl md:text-5xl font-bold mb-2">My Profile</h1>
-</div>
+          <h1 className="text-4xl md:text-5xl font-bold mb-2">My Profile</h1>
+        </div>
       </div>
 
       {/* Main Content */}
@@ -271,7 +276,9 @@ export default function ProfilePage() {
 
           <div className="space-y-3">
             <div className="flex justify-between items-center p-4 bg-gray-50 rounded-xl border border-gray-200">
-              <span className="text-gray-700 font-medium">Email Verification</span>
+              <span className="text-gray-700 font-medium">
+                Email Verification
+              </span>
               {profile.isEmailVerified ? (
                 <span className="flex items-center gap-2 text-green-600 font-semibold bg-green-50 px-4 py-2 rounded-lg">
                   <CheckCircle className="w-5 h-5" />

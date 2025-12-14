@@ -111,6 +111,7 @@ export async function DELETE(
         const { data, error } = await supabase.storage
           .from('PropertyImages')
           .remove(imageFilePaths);
+          
 
         if (error) {
           // Log error but don't fail the request since property is already deleted

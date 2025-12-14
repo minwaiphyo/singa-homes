@@ -2,6 +2,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./auth";
 import { prisma } from "./prisma";
+import { signOut } from "next-auth/react";
 
 // Server-side session helper
 export async function getServerAuthSession() {
@@ -100,3 +101,14 @@ export const authAPI = {
     return data;
   },
 };
+
+
+// Handles invalid session
+export const handleInvalidSession = async (router: any) => {{
+  alert("Your session is invalid. Please log in again.");
+
+  await signOut({ redirect: false });
+
+  router.push("/auth/sign-in");
+  }
+}
