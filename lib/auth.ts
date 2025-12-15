@@ -9,7 +9,8 @@ import type {
   NextApiResponse,
 } from "next"
 import { getServerSession } from "next-auth"
-
+import GoogleProvider from "next-auth/providers/google";
+  
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -76,6 +77,17 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID!,
+      clientSecret: process.env.GOOGLE_SECRET!,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
+    })
   ],
   session: {
     strategy: "jwt",
