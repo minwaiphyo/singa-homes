@@ -480,7 +480,7 @@ You can use CPF Ordinary Account (OA) for:
 - PropertyGuru
 - 99.co
 - HDB Resale Portal
-- PioProperties (wink!)
+- SingaProp (wink!)
 
 **Physical Viewing:**
 
@@ -789,7 +789,7 @@ Your loan is based on lower value:
 - **PropertyGuru:** propertyguru.com.sg
 - **99.co:** 99.co
 - **EdgeProp:** edgeprop.sg
-- **PioProperties:** [your site]
+- **SingaProp:** [your site]
 
 ## Your First-Time Buyer Checklist
 
@@ -856,7 +856,7 @@ Buying your first home is one of the biggest financial decisions you'll make. It
 
 Remember, there's no "perfect" property. Focus on finding a home that meets your needs, fits your budget, and aligns with your lifestyle.
 
-**Ready to start your home-buying journey?** Browse available properties on PioProperties and take the first step toward homeownership today!
+**Ready to start your home-buying journey?** Browse available properties on SingaProp and take the first step toward homeownership today!
 
 ---
 

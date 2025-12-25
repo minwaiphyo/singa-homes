@@ -45,7 +45,7 @@ export default function NavBar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link href="/" className="text-xl font-bold text-gray-900">
-            PioProperties
+            SingaProp
           </Link>
 
           {/* Desktop Menu */}
@@ -300,7 +300,6 @@ export default function NavBar() {
                         <Heart className="w-5 h-5 mr-3" />
                         Favorites
                       </Link>
-
 
                       <button
                         onClick={handleSignOut}

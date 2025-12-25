@@ -16,8 +16,9 @@ export default function Footer() {
       { label: "Create Listing", href: "/create-listing" },
       { label: "My Properties", href: "/my-properties" },
     ],
-    Resources: [{ label: "Blog", href: "/blog" },
-    { label: "FAQ", href: "/faq" }
+    Resources: [
+      { label: "Blog", href: "/blog" },
+      { label: "FAQ", href: "/faq" },
     ],
   };
 
@@ -54,10 +55,10 @@ export default function Footer() {
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-yellow-300 flex-shrink-0" />
                 <a
-                  href="mailto:hello@pioproperties.com"
+                  href="mailto:hello@singaprop.com"
                   className="text-white text-opacity-90 hover:text-yellow-300 transition-colors text-sm"
                 >
-                  hello@pioproperties.com
+                  hello@singaprop.com
                 </a>
               </div>
             </div>
@@ -89,7 +90,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
             <div className="text-center md:text-left text-white text-opacity-80 text-sm">
-              <p>&copy; {currentYear} PioProperties. All rights reserved.</p>
+              <p>&copy; {currentYear} SingaProp. All rights reserved.</p>
             </div>
 
             {/* Back to Top Button */}

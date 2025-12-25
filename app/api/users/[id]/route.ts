@@ -14,6 +14,9 @@ const serverSupabase = createClient(
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+
+
+      
     },
   }
 );

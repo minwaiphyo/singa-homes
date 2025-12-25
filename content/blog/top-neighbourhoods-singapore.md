@@ -1171,7 +1171,7 @@ Choosing a neighbourhood is deeply personal. The "best" neighbourhood for you de
 
 Remember, Singapore is compact - even the "far" neighbourhoods are only 30-40 minutes from the CBD. Focus on what makes you happy daily, not just what looks good on paper.
 
-**Ready to explore properties in your ideal neighbourhood?** Browse listings on PioProperties and find your perfect home today!
+**Ready to explore properties in your ideal neighbourhood?** Browse listings on SingaProp and find your perfect home today!
 
 ---
 
