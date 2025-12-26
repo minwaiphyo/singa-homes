@@ -4,7 +4,7 @@ slug: "create-beautiful-home-listing"
 excerpt: "Learn the key strategies to create an eye-catching home listing"
 coverImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
 date: "2025-01-15"
-author: "Pio Real Estate Team"
+author: "SingaProp Team"
 category: "Listing Tips"
 readTime: "5 min read"
 ---

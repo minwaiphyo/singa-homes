@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { User, LogOut, Heart, Home, Plus } from "lucide-react";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/blog", label: "Guides" },
   { href: "/properties", label: "Properties" },
-  { href: "/about-us", label: "About Us" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -81,10 +82,12 @@ export default function NavBar() {
                   className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   {session.user.avatar ? (
-                    <img
+                    <Image
                       src={session.user.avatar}
                       alt={`${session.user.firstName} ${session.user.lastName}`}
-                      className="w-8 h-8 rounded-full object-cover"
+                      width={40}
+                      height={40}
+                      className="rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
@@ -250,10 +253,17 @@ export default function NavBar() {
                       <div className="px-3 py-2 border-b border-gray-100">
                         <div className="flex items-center space-x-3">
                           {session.user.avatar ? (
-                            <img
+                            // <img
+                            //   src={session.user.avatar}
+                            //   alt={`${session.user.firstName} ${session.user.lastName}`}
+                            //   className="w-10 h-10 rounded-full object-cover"
+                            // />
+                            <Image
                               src={session.user.avatar}
                               alt={`${session.user.firstName} ${session.user.lastName}`}
-                              className="w-10 h-10 rounded-full object-cover"
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
                             />
                           ) : (
                             <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">

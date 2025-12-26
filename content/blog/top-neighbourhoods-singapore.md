@@ -5,7 +5,7 @@ excerpt: "Discover the best areas to live in Singapore based on your lifestyle a
 
 coverImage: "https://images.unsplash.com/photo-1565402170291-8491f14678db?w=800&q=80"
 date: "2025-01-25"
-author: "Pio Real Estate Team"
+author: "SingaProp Team"
 category: "Selling Tips"
 readTime: "6 min read"
 featured: true

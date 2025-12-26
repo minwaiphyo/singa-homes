@@ -3,15 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import {
-  Search,
-  MapPin,
-  Bed,
-  Bath,
-  Maximize2,
-  Star,
-  X,
-} from "lucide-react";
+import { Search, MapPin, Bed, Bath, Maximize2, Star, X } from "lucide-react";
 
 interface PropertyBrief {
   id: string;
@@ -121,28 +113,6 @@ function PropertiesForm() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-emerald-50 to-white">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white overflow-hidden pt-20 pb-24">
-        {/* Decorative Background Elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full -mr-48 -mt-48"></div>
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-white opacity-5 rounded-full -ml-36 mb-0"></div>
-
-        <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              Browse Properties
-            </h1>
-            <p className="text-xl md:text-2xl text-white text-opacity-90">
-              Find your dream home from{" "}
-              <span className="font-semibold text-yellow-300">
-                {properties.length}
-              </span>{" "}
-              available properties
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Filters Section */}
       <div className="bg-gradient-to-b from-white via-emerald-50 to-white py-8">
         <div className="max-w-7xl mx-auto px-4">

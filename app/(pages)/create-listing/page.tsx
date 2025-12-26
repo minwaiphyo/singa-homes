@@ -635,7 +635,7 @@ export default function CreateListingPage() {
                 </span>
               </label>
 
-              <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              {/* <label className="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <input
                   type="checkbox"
                   name="isFeatured"
@@ -647,7 +647,7 @@ export default function CreateListingPage() {
                 <span className="ml-3 text-gray-700 font-medium">
                   Featured listing
                 </span>
-              </label>
+              </label> */}
             </div>
           </div>
 

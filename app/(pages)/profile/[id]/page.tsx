@@ -53,6 +53,9 @@ export default function ProfilePage() {
       fetchProfile(params.id as string);
     }
   }, [params.id]);
+  console.log("TEST");
+  console.log(params.id);
+  console.log(session?.user.id);
 
   const fetchProfile = async (id: string) => {
     try {

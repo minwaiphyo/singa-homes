@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Use the singleton instead of creating new instance
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -77,15 +78,16 @@ import { authOptions } from '@/lib/auth';
 
 // POST - Create new user profile (This should probably be removed since registration handles user creation)
 export async function POST(request: NextRequest) {
+  console.log("received POST request to create user profile");
   try {
     const body = await request.json();
     
-    // Validate required fields - PASSWORD is required in your schema
+    // Validate required fields (password optional for OAuth users)
     const { email, password, firstName, lastName } = body;
     
-    if (!email || !password || !firstName || !lastName) {
+    if (!email || !firstName || !lastName) {
       return NextResponse.json(
-        { error: 'Email, password, firstName, and lastName are required' },
+        { error: 'Email, firstName, and lastName are required' },
         { status: 400 }
       );
     }
@@ -99,8 +101,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate password strength
-    if (password.length < 8) {
+    // Validate password strength if provided
+    if (password && password.length < 8) {
       return NextResponse.json(
         { error: 'Password must be at least 8 characters long' },
         { status: 400 }
@@ -127,8 +129,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Ensure a password exists (generate one for OAuth-created users)
+    const finalPassword = password || crypto.randomBytes(24).toString('hex');
+
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(finalPassword, 12);
 
     // Create new user
     const newUser = await prisma.user.create({

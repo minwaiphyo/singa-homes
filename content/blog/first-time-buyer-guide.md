@@ -4,7 +4,7 @@ slug: "first-time-buyer-guide"
 excerpt: "Everything you need to know about purchasing your first property in Singapore."
 coverImage: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80"
 date: "2025-01-20"
-author: "Pio Real Estate Team"
+author: "SingaProp Team"
 category: "Buyer Guide"
 readTime: "8 min read"
 ---
@@ -480,7 +480,7 @@ You can use CPF Ordinary Account (OA) for:
 - PropertyGuru
 - 99.co
 - HDB Resale Portal
-- SingaProp (wink!)
+- erties (wink!)
 
 **Physical Viewing:**
 
@@ -789,7 +789,7 @@ Your loan is based on lower value:
 - **PropertyGuru:** propertyguru.com.sg
 - **99.co:** 99.co
 - **EdgeProp:** edgeprop.sg
-- **SingaProp:** [your site]
+- **erties:** [your site]
 
 ## Your First-Time Buyer Checklist
 
