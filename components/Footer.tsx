@@ -30,7 +30,8 @@ export default function Footer() {
           {/* Company Info */}
           <div>
             <h2 className="text-2xl font-bold text-white mb-4">
-              Pio<span className="text-yellow-300">Properties</span>
+              <span className="text-red-500">Singa</span>
+              <span>Homes</span>
             </h2>
             <p className="text-white text-opacity-90 mb-6 leading-relaxed text-sm">
               Your trusted platform for buying, selling, and renting properties
@@ -55,10 +56,10 @@ export default function Footer() {
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-yellow-300 flex-shrink-0" />
                 <a
-                  href="mailto:hello@singaprop.com"
+                  href="mailto:hello@singahomes.com"
                   className="text-white text-opacity-90 hover:text-yellow-300 transition-colors text-sm"
                 >
-                  hello@singaprop.com
+                  hello@singahomes.com
                 </a>
               </div>
             </div>
@@ -90,7 +91,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
             <div className="text-center md:text-left text-white text-opacity-80 text-sm">
-              <p>&copy; {currentYear} SingaProp. All rights reserved.</p>
+              <p>&copy; {currentYear} SingaHomes. All rights reserved.</p>
             </div>
 
             {/* Back to Top Button */}

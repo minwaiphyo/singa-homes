@@ -4,7 +4,7 @@ slug: "first-time-buyer-guide"
 excerpt: "Everything you need to know about purchasing your first property in Singapore."
 coverImage: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=800&q=80"
 date: "2025-01-20"
-author: "SingaProp Team"
+author: "SingaHomes Team"
 category: "Buyer Guide"
 readTime: "8 min read"
 ---
@@ -856,7 +856,7 @@ Buying your first home is one of the biggest financial decisions you'll make. It
 
 Remember, there's no "perfect" property. Focus on finding a home that meets your needs, fits your budget, and aligns with your lifestyle.
 
-**Ready to start your home-buying journey?** Browse available properties on SingaProp and take the first step toward homeownership today!
+**Ready to start your home-buying journey?** Browse available properties on SingaHomes and take the first step toward homeownership today!
 
 ---
 

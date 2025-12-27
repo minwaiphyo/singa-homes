@@ -46,7 +46,7 @@ export default function NavBar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <Link href="/" className="text-xl font-bold text-gray-900">
-            SingaProp
+            SingaHomes
           </Link>
 
           {/* Desktop Menu */}

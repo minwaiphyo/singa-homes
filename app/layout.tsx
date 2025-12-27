@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SingaProp - Your Trusted Real Estate Platform in Singapore",
+  title: "SingaHomes - Your Trusted Real Estate Platform in Singapore",
   description:
     "Real estate transactions made transparent, seamless, and affordable",
 };

@@ -5,7 +5,7 @@ excerpt: "Discover the best areas to live in Singapore based on your lifestyle a
 
 coverImage: "https://images.unsplash.com/photo-1565402170291-8491f14678db?w=800&q=80"
 date: "2025-01-25"
-author: "SingaProp Team"
+author: "SingaHomes Team"
 category: "Selling Tips"
 readTime: "6 min read"
 featured: true
@@ -1171,7 +1171,7 @@ Choosing a neighbourhood is deeply personal. The "best" neighbourhood for you de
 
 Remember, Singapore is compact - even the "far" neighbourhoods are only 30-40 minutes from the CBD. Focus on what makes you happy daily, not just what looks good on paper.
 
-**Ready to explore properties in your ideal neighbourhood?** Browse listings on SingaProp and find your perfect home today!
+**Ready to explore properties in your ideal neighbourhood?** Browse listings on SingaHomes and find your perfect home today!
 
 ---
 

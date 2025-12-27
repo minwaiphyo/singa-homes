@@ -18,7 +18,7 @@ export default function AboutPage() {
         "We envision a future where buying and selling real estate is as simple as any other online transaction. Our platform aims to democratize real estate by making it accessible to everyone, regardless of their experience level. We're building a community where trust, transparency, and direct communication form the foundation of every property transaction.",
     },
     {
-      title: "Why Choose SingaProp?",
+      title: "Why Choose SingaHomes?",
       description:
         "Unlike traditional real estate platforms, we put you in direct control. No agent commissions, no hidden fees, no unnecessary delays. Our comprehensive platform includes advanced search filters, secure messaging, integrated scheduling for property visits, and detailed listing management tools. We provide the technology and support you need while letting you maintain full control over your transactions.",
     },
@@ -30,7 +30,7 @@ export default function AboutPage() {
     {
       title: "Getting Started",
       description:
-        "Joining PIO Real Estate is simple and free. Sellers can create detailed listings with photos and descriptions, set their own prices, and manage their own schedules. Buyers can browse properties, save favorites, and directly contact sellers they're interested in. Our intuitive interface makes it easy for both first-time users and experienced property traders.",
+        "Joining PropertyX is simple and free. Sellers can create detailed listings with photos and descriptions, set their own prices, and manage their own schedules. Buyers can browse properties, save favorites, and directly contact sellers they're interested in. Our intuitive interface makes it easy for both first-time users and experienced property traders.",
     },
     {
       title: "Security & Trust",
@@ -50,7 +50,7 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
-              About SingaProp
+              About SingaHomes
             </h1>
             <p className="text-xl md:text-2xl text-white text-opacity-90">
               Real estate transactions made transparent, seamless, and

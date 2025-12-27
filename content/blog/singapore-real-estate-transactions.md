@@ -4,7 +4,7 @@ slug: "singapore-real-estate-transactions"
 excerpt: "Everything you need to know about buying, selling, or renting property in Singapore without an agent—covering HDB flats, condominiums, landed homes, eligibility rules, taxes, and step-by-step procedures."
 coverImage: "https://images.unsplash.com/photo-1709913492535-56fb1ac85092?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
 date: "2025-01-15"
-author: "Pio Real Estate Team"
+author: "SingaHomes Team"
 category: "Comprehensive Guides"
 readTime: "20 min read"
 ---

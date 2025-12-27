@@ -4,7 +4,7 @@ slug: "create-beautiful-home-listing"
 excerpt: "Learn the key strategies to create an eye-catching home listing"
 coverImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80"
 date: "2025-01-15"
-author: "SingaProp Team"
+author: "SingaHomes Team"
 category: "Listing Tips"
 readTime: "5 min read"
 ---
@@ -283,4 +283,4 @@ Creating a beautiful home listing takes effort, but the payoff is worth it. Prof
 
 You're not just selling a property — you're selling a lifestyle and a future. Make each photo and word count.<br><br>
 
-Need help with staging or photography? Contact SingaProp for expert guidance.<br><br>
+Need help with staging or photography? Contact SingaHomes for expert guidance.<br><br>
