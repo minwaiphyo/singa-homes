@@ -1,5 +1,5 @@
 // lib/prismaAdmin.ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '../generated/prisma'
 
 // Use direct connection (not pooled) for admin operations
 const DATABASE_URL = process.env.DIRECT_DATABASE_URL || process.env.DATABASE_URL
