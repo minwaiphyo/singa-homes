@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Mail, Phone, MapPin, ArrowRight } from "lucide-react";
+import { ArrowUp, Building2, Mail, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -17,66 +17,61 @@ export default function Footer() {
       { label: "My Properties", href: "/my-properties" },
     ],
     Resources: [
-      { label: "Blog", href: "/blog" },
+      { label: "Guides", href: "/blog" },
       { label: "FAQ", href: "/faq" },
     ],
   };
 
   return (
-    <footer className="bg-gradient-to-br from-emerald-600 via-blue-600 to-purple-600 text-white">
-      {/* Main Footer Content */}
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          {/* Company Info */}
+    <footer className="border-t border-brand-line bg-brand-navy-dark text-white">
+      <div className="mx-auto max-w-7xl px-4 py-14">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-4">
-              <span className="text-red-500">Singa</span>
-              <span>Homes</span>
-            </h2>
-            <p className="text-white text-opacity-90 mb-6 leading-relaxed text-sm">
-              Your trusted platform for buying, selling, and renting properties
-              in Singapore.
+            <div className="mb-4 flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-brand-red">
+                <Building2 className="h-5 w-5" />
+              </span>
+              <h2 className="text-2xl font-bold tracking-tight">SingaHomes</h2>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-slate-300">
+              A Singapore-focused real estate marketplace built for transparent
+              buyer-seller property transactions.
             </p>
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-yellow-300 mt-1 flex-shrink-0" />
-                <span className="text-white text-opacity-90 text-sm">
-                  Singapore
-                </span>
-              </div>
+
+            <div className="mt-6 space-y-3 text-sm text-slate-300">
               <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-yellow-300 flex-shrink-0" />
-                <a
-                  href="tel:+6512345678"
-                  className="text-white text-opacity-90 hover:text-yellow-300 transition-colors text-sm"
-                >
-                  +65 1234 5678
-                </a>
+                <MapPin className="h-4 w-4 text-brand-red" />
+                Singapore
               </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-yellow-300 flex-shrink-0" />
-                <a
-                  href="mailto:hello@singahomes.com"
-                  className="text-white text-opacity-90 hover:text-yellow-300 transition-colors text-sm"
-                >
-                  hello@singahomes.com
-                </a>
-              </div>
+              <a
+                href="tel:+6512345678"
+                className="flex items-center gap-3 hover:text-white"
+              >
+                <Phone className="h-4 w-4 text-brand-red" />
+                +65 1234 5678
+              </a>
+              <a
+                href="mailto:hello@singahomes.com"
+                className="flex items-center gap-3 hover:text-white"
+              >
+                <Mail className="h-4 w-4 text-brand-red" />
+                hello@singahomes.com
+              </a>
             </div>
           </div>
 
-          {/* Footer Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h4 className="text-white font-bold mb-6 text-lg">{category}</h4>
+              <h4 className="mb-5 text-sm font-bold uppercase tracking-wide text-white">
+                {category}
+              </h4>
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-white text-opacity-80 hover:text-yellow-300 transition-colors duration-300 flex items-center gap-2 group text-sm"
+                      className="text-sm text-slate-300 hover:text-white"
                     >
-                      <span className="w-1 h-1 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                       {link.label}
                     </Link>
                   </li>
@@ -86,23 +81,15 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Divider */}
-        <div className="border-t border-white border-opacity-20 py-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Copyright */}
-            <div className="text-center md:text-left text-white text-opacity-80 text-sm">
-              <p>&copy; {currentYear} SingaHomes. All rights reserved.</p>
-            </div>
-
-            {/* Back to Top Button */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="text-white text-opacity-80 hover:text-yellow-300 transition-colors text-sm font-medium flex items-center gap-2"
-            >
-              Back to Top
-              <ArrowRight className="w-4 h-4 rotate-270" />
-            </button>
-          </div>
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-6 text-sm text-slate-400 md:flex-row md:items-center md:justify-between">
+          <p>&copy; {currentYear} SingaHomes. All rights reserved.</p>
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-2 font-semibold text-slate-300 hover:text-white"
+          >
+            Back to Top
+            <ArrowUp className="h-4 w-4" />
+          </button>
         </div>
       </div>
     </footer>

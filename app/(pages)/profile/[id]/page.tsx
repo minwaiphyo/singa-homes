@@ -11,7 +11,6 @@ import {
   Mail,
   Phone,
   Calendar,
-  MapPin,
   Edit,
   Heart,
   Home,
@@ -53,9 +52,6 @@ export default function ProfilePage() {
       fetchProfile(params.id as string);
     }
   }, [params.id]);
-  console.log("TEST");
-  console.log(params.id);
-  console.log(session?.user.id);
 
   const fetchProfile = async (id: string) => {
     try {
@@ -84,6 +80,8 @@ export default function ProfilePage() {
       day: "numeric",
     });
   };
+
+  const isOwner = session?.user?.id === params.id;
 
   if (status === "loading" || isLoading) {
     return (
@@ -158,14 +156,15 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Edit Button */}
-              <button
-                onClick={() => router.push(`/profile/${params.id}/edit`)}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
-              >
-                <Edit className="w-5 h-5" />
-                Edit Profile
-              </button>
+              {isOwner && (
+                <button
+                  onClick={() => router.push(`/profile/${params.id}/edit`)}
+                  className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-blue-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+                >
+                  <Edit className="w-5 h-5" />
+                  Edit Profile
+                </button>
+              )}
             </div>
 
             {/* Stats Grid */}
@@ -300,26 +299,27 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <button
-            onClick={() => router.push("/my-properties")}
-            className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-emerald-600 text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition-all shadow-lg hover:shadow-xl group"
-          >
-            <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
-            <span>View My Properties</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
+        {isOwner && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <button
+              onClick={() => router.push("/my-properties")}
+              className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-emerald-600 text-emerald-600 font-semibold rounded-xl hover:bg-emerald-50 transition-all shadow-lg hover:shadow-xl group"
+            >
+              <Home className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <span>View My Properties</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
 
-          <button
-            onClick={() => router.push("/favorites")}
-            className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-red-600 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all shadow-lg hover:shadow-xl group"
-          >
-            <Heart className="w-6 h-6 group-hover:scale-110 transition-transform" />
-            <span>View Favorites</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
+            <button
+              onClick={() => router.push("/favorites")}
+              className="flex items-center justify-center gap-3 p-6 bg-white border-2 border-red-600 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all shadow-lg hover:shadow-xl group"
+            >
+              <Heart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <span>View Favorites</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ export default function EditPropertyPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/signin");
+      router.push("/auth/sign-in");
       return;
     }
 
@@ -241,7 +241,6 @@ export default function EditPropertyPage() {
 
       // If replacing images, append new image files
       if (replaceImages) {
-        console.log(replaceImages);
         newImageFiles.forEach((file, index) => {
           submitData.append(`image_${index}`, file);
         });

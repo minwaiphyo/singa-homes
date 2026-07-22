@@ -178,7 +178,6 @@ export default function SignUpPage() {
 
     try {
 
-      console.log("formData: ", formData)
       // Prepare FormData (includes both text & file fields)
       const formDataToSend = new FormData();
       formDataToSend.append("email", formData.email);
@@ -195,7 +194,6 @@ export default function SignUpPage() {
       });
 
       const data = await response.json();
-      console.log("data: ", data);
 
       if (response.ok) {
       

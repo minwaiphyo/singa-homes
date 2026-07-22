@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { PropertyType, ListingType } from '@/generated/prisma';
 
 
@@ -108,7 +108,7 @@ export async function DELETE(
     // Only delete from Supabase if property deletion was successful
     if (imageFilePaths.length > 0) {
       try {
-        const { data, error } = await supabase.storage
+        const { data, error } = await supabaseAdmin.storage
           .from('PropertyImages')
           .remove(imageFilePaths);
           
@@ -481,6 +481,53 @@ export async function PATCH(
       );
     }
 
+    const contentType = request.headers.get('content-type') || '';
+
+    if (contentType.includes('application/json')) {
+      const body = await request.json();
+      const updateData: { isActive?: boolean; isFeatured?: boolean } = {};
+
+      if (typeof body.isActive === 'boolean') {
+        updateData.isActive = body.isActive;
+      }
+
+      if (typeof body.isFeatured === 'boolean') {
+        updateData.isFeatured = body.isFeatured;
+      }
+
+      if (Object.keys(updateData).length === 0) {
+        return NextResponse.json(
+          { error: 'No supported fields provided for JSON update' },
+          { status: 400 }
+        );
+      }
+
+      const updatedProperty = await prisma.property.update({
+        where: { id },
+        data: updateData,
+        include: {
+          images: true,
+          seller: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      return NextResponse.json(
+        {
+          success: true,
+          property: updatedProperty,
+          message: 'Property status updated successfully',
+        },
+        { status: 200 }
+      );
+    }
+
     const formData = await request.formData();
 
     // Check if images should be replaced
@@ -673,7 +720,7 @@ export async function PATCH(
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
-        const { error } = await supabase.storage
+        const { error } = await supabaseAdmin.storage
           .from('PropertyImages')
           .upload(fileName, buffer, {
             contentType: file.type,
@@ -689,7 +736,7 @@ export async function PATCH(
 
         const {
           data: { publicUrl },
-        } = supabase.storage.from('PropertyImages').getPublicUrl(fileName);
+        } = supabaseAdmin.storage.from('PropertyImages').getPublicUrl(fileName);
 
         newImageRecords.push({
           url: publicUrl,
@@ -726,7 +773,7 @@ export async function PATCH(
     // Delete images from Supabase storage (only if DB update succeeded)
     if (imagesToDelete.length > 0) {
       try {
-        const { error: deleteError } = await supabase.storage
+        const { error: deleteError } = await supabaseAdmin.storage
           .from('PropertyImages')
           .remove(imagesToDelete);
 
@@ -759,9 +806,9 @@ export async function PATCH(
     // Cleanup: Delete newly uploaded images from Supabase if update failed
     if (shouldReplaceImages && newUploadedFileNames.length > 0) {
       try {
-        const { error: deleteError } = await supabase.storage
-          .from('PropertyImages')
-          .remove(newUploadedFileNames);
+          const { error: deleteError } = await supabaseAdmin.storage
+            .from('PropertyImages')
+            .remove(newUploadedFileNames);
 
         if (deleteError) {
           console.error('Failed to cleanup newly uploaded images:', deleteError);

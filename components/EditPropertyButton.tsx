@@ -44,7 +44,7 @@ const EditPropertyButton = ({ propertyId }: { propertyId: string }) => {
     <button
       onClick={handleEditClick}
       disabled={isLoading}
-      className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed border-2 border-green-500 text-green-500 hover:bg-green-50"
+      className="flex items-center justify-center gap-2 rounded-full border border-brand-navy px-6 py-3 text-sm font-semibold text-brand-navy transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
     >
       <Pencil className="w-5 h-5" />
       Edit Property

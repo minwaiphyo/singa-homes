@@ -52,7 +52,7 @@ export default function MyPropertiesPage() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/signin");
+      router.push("/auth/sign-in");
       return;
     }
 

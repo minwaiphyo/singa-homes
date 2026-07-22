@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { get } from 'http';
 import { PropertyType, ListingType } from '@/generated/prisma';
 import { create } from 'domain';
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
       const arrayBuffer = await file.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
 
-      const { data, error } = await supabase.storage  
+      const { data, error } = await supabaseAdmin.storage  
         .from('PropertyImages')
         .upload(fileName, buffer, {
           contentType: file.type,
@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
 
       const {
         data: { publicUrl },
-      } = supabase.storage.from('PropertyImages').getPublicUrl(fileName);
+      } = supabaseAdmin.storage.from('PropertyImages').getPublicUrl(fileName);
 
       imageRecords.push({
         url: publicUrl,
@@ -301,7 +301,7 @@ export async function POST(request: NextRequest) {
     // Cleanup: Delete uploaded images from Supabase if property creation failed
     if (uploadedFileNames.length > 0) {
       try {
-        const { error: deleteError } = await supabase.storage
+        const { error: deleteError } = await supabaseAdmin.storage
           .from('PropertyImages')
           .remove(uploadedFileNames);
 

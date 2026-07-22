@@ -215,7 +215,7 @@ export default function CreateListingPage() {
   }
 
   if (status === "unauthenticated") {
-    router.push("/auth/signin");
+    router.push("/auth/sign-in");
     return null;
   }
 

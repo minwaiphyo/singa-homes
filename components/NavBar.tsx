@@ -1,10 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import { User, LogOut, Heart, Home, Plus } from "lucide-react";
 import Image from "next/image";
+import { useSession, signOut } from "next-auth/react";
+import {
+  Building2,
+  Heart,
+  Home,
+  LogOut,
+  Menu,
+  Plus,
+  User,
+  X,
+} from "lucide-react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -22,144 +32,111 @@ export default function NavBar() {
     await signOut({ callbackUrl: "/" });
   };
 
-  // Handle Create Listing click - redirect to login if not authenticated
-  const handleCreateListingClick = () => {
-    if (!session) {
-      window.location.href = "/auth/sign-in";
-    }
-    // If user is authenticated, the Link component will handle the routing
-  };
-
-  // Close mobile menu when clicking outside
-  const closeMobileMenu = () => {
+  const closeMenus = () => {
     setIsOpen(false);
-  };
-
-  // Close profile dropdown when clicking outside
-  const closeProfileDropdown = () => {
     setIsProfileOpen(false);
   };
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
-          {/* Logo */}
-          <Link href="/" className="text-xl font-bold text-gray-900">
-            SingaHomes
+    <nav className="sticky top-0 z-50 border-b border-brand-line bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-[72px] items-center justify-between">
+          <Link href="/" className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-red-100 bg-brand-red-soft text-brand-red">
+              <Building2 className="h-5 w-5" />
+            </span>
+            <span className="text-xl font-bold tracking-tight text-brand-navy">
+              SingaHomes
+            </span>
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden items-center gap-7 md:flex">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-gray-700 hover:text-blue-600 transition-colors"
+                className="text-sm font-semibold text-brand-ink hover:text-brand-red"
               >
                 {link.label}
               </Link>
             ))}
 
-            {/* Create Listing - Always visible */}
             <Link
               href={session ? "/create-listing" : "/auth/sign-in"}
-              onClick={session ? undefined : handleCreateListingClick}
-              className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 rounded-full border border-brand-line px-4 py-2 text-sm font-semibold text-brand-ink hover:border-brand-red hover:text-brand-red"
             >
-              <Plus className="w-4 h-4" />
-              <span>Create Listing</span>
+              <Plus className="h-4 w-4" />
+              Create Listing
             </Link>
 
-            {/* Authentication Section */}
             {status === "loading" ? (
-              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="h-9 w-9 animate-pulse rounded-full bg-slate-200" />
             ) : session ? (
-              // Logged in user - Profile dropdown
               <div className="relative">
                 <button
-                  onClick={() => setIsProfileOpen(!isProfileOpen)}
-                  className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  onClick={() => setIsProfileOpen((value) => !value)}
+                  className="flex items-center gap-2 rounded-full border border-transparent p-1 pr-3 hover:border-brand-line hover:bg-slate-50"
                 >
                   {session.user.avatar ? (
                     <Image
                       src={session.user.avatar}
                       alt={`${session.user.firstName} ${session.user.lastName}`}
-                      width={40}
-                      height={40}
+                      width={36}
+                      height={36}
                       className="rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-medium">
-                        {session.user.firstName?.[0]}
-                        {session.user.lastName?.[0]}
-                      </span>
-                    </div>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-navy text-sm font-semibold text-white">
+                      {session.user.firstName?.[0]}
+                      {session.user.lastName?.[0]}
+                    </span>
                   )}
-                  <span className="text-gray-700 font-medium">
+                  <span className="text-sm font-semibold text-brand-ink">
                     {session.user.firstName}
                   </span>
                 </button>
 
-                {/* Profile Dropdown */}
                 {isProfileOpen && (
                   <>
-                    {/* Backdrop */}
                     <div
                       className="fixed inset-0 z-10"
-                      onClick={closeProfileDropdown}
-                    ></div>
+                      onClick={() => setIsProfileOpen(false)}
+                    />
+                    <div className="absolute right-0 z-20 mt-2 w-56 rounded-lg border border-brand-line bg-white shadow-lg">
+                      <div className="border-b border-brand-line px-4 py-3">
+                        <p className="text-sm font-semibold text-brand-ink">
+                          {session.user.firstName} {session.user.lastName}
+                        </p>
+                        <p className="text-sm text-brand-muted">
+                          {session.user.email}
+                        </p>
+                      </div>
 
-                    {/* Dropdown Menu */}
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border z-20">
                       <div className="py-2">
-                        <div className="px-4 py-2 border-b border-gray-100">
-                          <p className="text-sm font-medium text-gray-900">
-                            {session.user.firstName} {session.user.lastName}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {session.user.email}
-                          </p>
-                        </div>
-
-                        <Link
-                          href={
-                            session
-                              ? `/profile/${session.user.id}`
-                              : "/auth/sign-in"
-                          }
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                          onClick={closeProfileDropdown}
-                        >
-                          <User className="w-4 h-4 mr-3" />
-                          My Profile
-                        </Link>
-
-                        <Link
+                        <DropdownLink
+                          href={`/profile/${session.user.id}`}
+                          icon={<User className="h-4 w-4" />}
+                          label="My Profile"
+                          onClick={closeMenus}
+                        />
+                        <DropdownLink
                           href="/my-properties"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                          onClick={closeProfileDropdown}
-                        >
-                          <Home className="w-4 h-4 mr-3" />
-                          My Properties
-                        </Link>
-
-                        <Link
+                          icon={<Home className="h-4 w-4" />}
+                          label="My Properties"
+                          onClick={closeMenus}
+                        />
+                        <DropdownLink
                           href="/favorites"
-                          className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                          onClick={closeProfileDropdown}
-                        >
-                          <Heart className="w-4 h-4 mr-3" />
-                          Favorites
-                        </Link>
-
-                        <div className="border-t border-gray-100 mt-2 pt-2">
+                          icon={<Heart className="h-4 w-4" />}
+                          label="Favorites"
+                          onClick={closeMenus}
+                        />
+                        <div className="mt-2 border-t border-brand-line pt-2">
                           <button
                             onClick={handleSignOut}
-                            className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                            className="flex w-full items-center gap-3 px-4 py-2 text-sm font-semibold text-brand-red hover:bg-brand-red-soft"
                           >
-                            <LogOut className="w-4 h-4 mr-3" />
+                            <LogOut className="h-4 w-4" />
                             Sign Out
                           </button>
                         </div>
@@ -169,17 +146,16 @@ export default function NavBar() {
                 )}
               </div>
             ) : (
-              // Not logged in - Login/Register buttons
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4">
                 <Link
                   href="/auth/sign-in"
-                  className="text-gray-700 hover:text-blue-600 transition-colors"
+                  className="text-sm font-semibold text-brand-ink hover:text-brand-red"
                 >
                   Sign In
                 </Link>
                 <Link
                   href="/auth/sign-up"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="rounded-full bg-brand-red px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-red-dark"
                 >
                   Sign Up
                 </Link>
@@ -187,163 +163,155 @@ export default function NavBar() {
             )}
           </div>
 
-          {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none"
+            onClick={() => setIsOpen((value) => !value)}
+            className="rounded-md p-2 text-brand-ink hover:bg-slate-100 md:hidden"
+            aria-label="Toggle menu"
           >
-            {isOpen ? "✕" : "☰"}
+            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
-        {/* Mobile Menu */}
         {isOpen && (
-          <>
-            {/* Backdrop for mobile menu */}
-            <div
-              className="fixed inset-0 z-10 md:hidden"
-              onClick={closeMobileMenu}
-            ></div>
+          <div className="border-t border-brand-line bg-white py-3 md:hidden">
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <MobileLink
+                  key={link.href}
+                  href={link.href}
+                  label={link.label}
+                  onClick={closeMenus}
+                />
+              ))}
 
-            {/* Mobile menu content */}
-            <div className="md:hidden bg-white border-t border-gray-200 relative z-20">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                    onClick={closeMobileMenu}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+              <MobileLink
+                href={session ? "/create-listing" : "/auth/sign-in"}
+                label="Create Listing"
+                icon={<Plus className="h-5 w-5" />}
+                onClick={closeMenus}
+              />
 
-                {/* Mobile Create Listing - Always visible */}
-                <Link
-                  href={session ? "/create-listing" : "/auth/sign-in"}
-                  className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                  onClick={closeMobileMenu}
-                >
-                  <Plus className="w-5 h-5 mr-3" />
-                  Create Listing
-                </Link>
-
-                {/* Mobile Favorites - Only visible if authenticated */}
-                {session && (
-                  <Link
-                    href="/favorites"
-                    className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                    onClick={closeMobileMenu}
-                  >
-                    <Heart className="w-5 h-5 mr-3" />
-                    Favorites
-                  </Link>
-                )}
-
-                {/* Mobile Authentication Section */}
-                <div className="border-t border-gray-200 pt-3 mt-3">
-                  {status === "loading" ? (
-                    <div className="px-3 py-2">
-                      <div className="w-full h-8 bg-gray-200 rounded animate-pulse"></div>
-                    </div>
-                  ) : session ? (
-                    // Logged in user - Mobile profile section
-                    <div className="space-y-1">
-                      <div className="px-3 py-2 border-b border-gray-100">
-                        <div className="flex items-center space-x-3">
-                          {session.user.avatar ? (
-                            // <img
-                            //   src={session.user.avatar}
-                            //   alt={`${session.user.firstName} ${session.user.lastName}`}
-                            //   className="w-10 h-10 rounded-full object-cover"
-                            // />
-                            <Image
-                              src={session.user.avatar}
-                              alt={`${session.user.firstName} ${session.user.lastName}`}
-                              width={40}
-                              height={40}
-                              className="rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                              <span className="text-white font-medium">
-                                {session.user.firstName?.[0]}
-                                {session.user.lastName?.[0]}
-                              </span>
-                            </div>
-                          )}
-                          <div>
-                            <p className="font-medium text-gray-900">
-                              {session.user.firstName} {session.user.lastName}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {session.user.email}
-                            </p>
-                          </div>
-                        </div>
+              {status !== "loading" && session ? (
+                <>
+                  <div className="my-3 border-t border-brand-line pt-3">
+                    <div className="mb-2 flex items-center gap-3 px-3 py-2">
+                      {session.user.avatar ? (
+                        <Image
+                          src={session.user.avatar}
+                          alt={`${session.user.firstName} ${session.user.lastName}`}
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-navy font-semibold text-white">
+                          {session.user.firstName?.[0]}
+                          {session.user.lastName?.[0]}
+                        </span>
+                      )}
+                      <div>
+                        <p className="font-semibold text-brand-ink">
+                          {session.user.firstName} {session.user.lastName}
+                        </p>
+                        <p className="text-sm text-brand-muted">
+                          {session.user.email}
+                        </p>
                       </div>
-
-                      <Link
-                        href="/profile"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={closeMobileMenu}
-                      >
-                        <User className="w-5 h-5 mr-3" />
-                        My Profile
-                      </Link>
-
-                      <Link
-                        href="/my-properties"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={closeMobileMenu}
-                      >
-                        <Home className="w-5 h-5 mr-3" />
-                        My Properties
-                      </Link>
-
-                      <Link
-                        href="/favorites"
-                        className="flex items-center px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={closeMobileMenu}
-                      >
-                        <Heart className="w-5 h-5 mr-3" />
-                        Favorites
-                      </Link>
-
-                      <button
-                        onClick={handleSignOut}
-                        className="flex items-center w-full px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                      >
-                        <LogOut className="w-5 h-5 mr-3" />
-                        Sign Out
-                      </button>
                     </div>
-                  ) : (
-                    // Not logged in - Mobile login/register
-                    <div className="space-y-1">
-                      <Link
-                        href="/auth/sign-in"
-                        className="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-                        onClick={closeMobileMenu}
-                      >
-                        Sign In
-                      </Link>
-                      <Link
-                        href="/auth/sign-up"
-                        className="block px-3 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md transition-colors text-center"
-                        onClick={closeMobileMenu}
-                      >
-                        Sign Up
-                      </Link>
-                    </div>
-                  )}
+
+                    <MobileLink
+                      href={`/profile/${session.user.id}`}
+                      label="My Profile"
+                      icon={<User className="h-5 w-5" />}
+                      onClick={closeMenus}
+                    />
+                    <MobileLink
+                      href="/my-properties"
+                      label="My Properties"
+                      icon={<Home className="h-5 w-5" />}
+                      onClick={closeMenus}
+                    />
+                    <MobileLink
+                      href="/favorites"
+                      label="Favorites"
+                      icon={<Heart className="h-5 w-5" />}
+                      onClick={closeMenus}
+                    />
+                    <button
+                      onClick={handleSignOut}
+                      className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold text-brand-red hover:bg-brand-red-soft"
+                    >
+                      <LogOut className="h-5 w-5" />
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="mt-3 space-y-2 border-t border-brand-line pt-3">
+                  <MobileLink
+                    href="/auth/sign-in"
+                    label="Sign In"
+                    onClick={closeMenus}
+                  />
+                  <Link
+                    href="/auth/sign-up"
+                    onClick={closeMenus}
+                    className="block rounded-full bg-brand-red px-3 py-2 text-center text-sm font-semibold text-white hover:bg-brand-red-dark"
+                  >
+                    Sign Up
+                  </Link>
                 </div>
-              </div>
+              )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </nav>
+  );
+}
+
+function DropdownLink({
+  href,
+  icon,
+  label,
+  onClick,
+}: {
+  href: string;
+  icon: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-brand-ink hover:bg-brand-red-soft hover:text-brand-red"
+    >
+      {icon}
+      {label}
+    </Link>
+  );
+}
+
+function MobileLink({
+  href,
+  icon,
+  label,
+  onClick,
+}: {
+  href: string;
+  icon?: ReactNode;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-semibold text-brand-ink hover:bg-brand-red-soft hover:text-brand-red"
+    >
+      {icon}
+      {label}
+    </Link>
   );
 }

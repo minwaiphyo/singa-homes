@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
 import { X, Upload, User } from "lucide-react";
@@ -17,6 +18,7 @@ export default function EditProfilePage() {
   const router = useRouter();
   const params = useParams();
   const id = params?.id as string | undefined;
+  const { data: session, status } = useSession();
 
   const [form, setForm] = useState<FormState>({
     firstName: "",
@@ -35,7 +37,19 @@ export default function EditProfilePage() {
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string>(""); // existing avatar public URL
 
   useEffect(() => {
+    if (status === "loading") return;
+
+    if (status === "unauthenticated") {
+      router.push("/auth/sign-in");
+      return;
+    }
+
     if (!id) return;
+    if (session?.user?.id !== id) {
+      setError("You can only edit your own profile.");
+      return;
+    }
+
     let mounted = true;
 
     (async () => {
@@ -73,7 +87,7 @@ export default function EditProfilePage() {
       if (avatarPreview) URL.revokeObjectURL(avatarPreview);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, router, session?.user?.id, status]);
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

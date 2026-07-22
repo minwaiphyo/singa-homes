@@ -34,7 +34,7 @@ const FavoriteButton = ({ propertyId }: { propertyId: string }) => {
   const handleToggleFavorite = async () => {
     // Redirect to sign in if not authenticated
     if (!session?.user?.id) {
-      router.push("/auth/signin");
+      router.push("/auth/sign-in");
       return;
     }
 
@@ -83,10 +83,10 @@ const FavoriteButton = ({ propertyId }: { propertyId: string }) => {
     <button
       onClick={handleToggleFavorite}
       disabled={isLoading}
-      className={`flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
+      className={`flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
         isFavorited
-          ? "bg-red-500 text-white hover:bg-red-600 shadow-lg"
-          : "border-2 border-red-500 text-red-500 hover:bg-red-50"
+          ? "bg-brand-red text-white hover:bg-brand-red-dark shadow-lg"
+          : "border border-brand-red text-brand-red hover:bg-brand-red-soft"
       }`}
     >
       {isLoading ? (

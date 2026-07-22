@@ -3,8 +3,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
-import { supabase } from '@/lib/supabase';
-import { getSession } from 'next-auth/react';
+import { createClient } from '@supabase/supabase-js';
+
+const createStorageClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseSecretKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseSecretKey) {
+    throw new Error(
+      'Missing Supabase storage credentials. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.'
+    );
+  }
+
+  return createClient(supabaseUrl, supabaseSecretKey, {
+    auth: {
+      persistSession: false,
+      autoRefreshToken: false,
+    },
+  });
+};
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : 'Unknown server error';
 
 export async function POST(request: NextRequest) {
   try {
@@ -18,7 +38,9 @@ export async function POST(request: NextRequest) {
     const lastName = formData.get("lastName") as string;
     const age = formData.get("age") ? Number(formData.get("age")) : undefined;
     const phone = formData.get("phone") as string | null;
-    const avatar = formData.get("avatar") as File | null;
+    const avatarEntry = formData.get("avatar");
+    const avatar =
+      avatarEntry instanceof File && avatarEntry.size > 0 ? avatarEntry : null;
     
     // No need bio during initial sign up 
     //const bio = formData.get("bio") as string | null;
@@ -82,13 +104,27 @@ export async function POST(request: NextRequest) {
       //Generate filePath
       const filePath = `avatars/${crypto.randomUUID()}.${ext}`;
 
+      const arrayBuffer = await avatar.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const supabase = createStorageClient();
+
       const { error: uploadError } = await supabase.storage
                                       .from("Avatar")
-                                      .upload(filePath, avatar!);
+                                      .upload(filePath, buffer, {
+                                        contentType: avatar.type || 'application/octet-stream',
+                                        cacheControl: '3600',
+                                        upsert: false,
+                                      });
       if (uploadError) {
         console.error('Error uploading avatar:', uploadError);
         return NextResponse.json(
-          { error: 'Error uploading avatar' },
+          {
+            error: 'Error uploading avatar',
+            details:
+              process.env.NODE_ENV === 'development'
+                ? uploadError.message
+                : undefined,
+          },
           { status: 500 }
         );
       }
@@ -136,7 +172,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error registering user:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      {
+        error: 'Internal server error',
+        details:
+          process.env.NODE_ENV === 'development'
+            ? getErrorMessage(error)
+            : undefined,
+      },
       { status: 500 }
     );
   }

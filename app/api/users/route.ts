@@ -78,7 +78,6 @@ import { authOptions } from '@/lib/auth';
 
 // POST - Create new user profile (This should probably be removed since registration handles user creation)
 export async function POST(request: NextRequest) {
-  console.log("received POST request to create user profile");
   try {
     const body = await request.json();
     
@@ -181,6 +180,12 @@ export async function POST(request: NextRequest) {
 
 // PUT - Update existing user profile
 export async function PUT(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     
@@ -191,6 +196,13 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         { error: 'userId is required' },
         { status: 400 }
+      );
+    }
+
+    if (userId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only update your own profile' },
+        { status: 403 }
       );
     }
 
@@ -267,6 +279,12 @@ export async function PUT(request: NextRequest) {
 
 // DELETE - Delete user profile
 export async function DELETE(request: NextRequest) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
@@ -275,6 +293,13 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { error: 'userId is required' },
         { status: 400 }
+      );
+    }
+
+    if (userId !== session.user.id) {
+      return NextResponse.json(
+        { error: 'You can only delete your own profile' },
+        { status: 403 }
       );
     }
 
